@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tide Focus — Pomodoro</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep: #0a1628;
+    --abyss: #061020;
+    --midnight: #0d2240;
+    --ocean: #0e4d6e;
+    --teal: #1a7a8a;
+    --seafoam: #2abfbf;
+    --foam: #7ee8e8;
+    --sand: #c8e8e0;
+    --pearl: #e8f6f5;
+    --glow: rgba(42, 191, 191, 0.15);
+    --glow-strong: rgba(42, 191, 191, 0.35);
+    --glass: rgba(10, 40, 70, 0.55);
+    --glass-border: rgba(42, 191, 191, 0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--abyss);
+    color: var(--pearl);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Ocean background */
+  .ocean-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: radial-gradient(ellipse at 20% 0%, #0e3d5e 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 100%, #0a2a45 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 50%, #061828 0%, #030c18 100%);
+  }
+
+  /* Animated bioluminescent particles */
+  .particles {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--seafoam);
+    opacity: 0;
+    animation: float-up linear infinite;
+  }
+
+  @keyframes float-up {
+    0% { transform: translateY(110vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.2; }
+    100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+  }
+
+  /* Wave layers */
+  .waves {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 120px;
+    border-radius: 50% 50% 0 0 / 80px 80px 0 0;
+    animation: wave-move linear infinite;
+  }
+
+  .wave-1 {
+    background: rgba(14, 77, 110, 0.25);
+    height: 100px;
+    animation-duration: 8s;
+  }
+  .wave-2 {
+    background: rgba(26, 122, 138, 0.18);
+    height: 130px;
+    animation-duration: 12s;
+    animation-direction: reverse;
+  }
+  .wave-3 {
+    background: rgba(42, 191, 191, 0.06);
+    height: 80px;
+    animation-duration: 6s;
+  }
+
+  @keyframes wave-move {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* Main layout */
+  .app {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  /* Header */
+  header {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding-bottom: 1rem;
+  }
+
+  .logo {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--foam);
+    text-shadow: 0 0 40px rgba(126, 232, 232, 0.4);
+  }
+
+  .logo span {
+    font-style: italic;
+    color: var(--seafoam);
+  }
+
+  .tagline {
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-top: 0.3rem;
+    font-weight: 300;
+  }
+
+  /* Glass card */
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 2rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(126, 232, 232, 0.08);
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--seafoam);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .card-title::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--seafoam);
+    opacity: 0.5;
+  }
+
+  /* Timer section */
+  .timer-card { position: relative; overflow: hidden; }
+
+  .timer-card::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(42,191,191,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Phase indicator */
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 1rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 1.8rem;
+    transition: all 0.5s ease;
+  }
+
+  .phase-badge.work {
+    background: rgba(42, 191, 191, 0.15);
+    border: 1px solid rgba(42, 191, 191, 0.3);
+    color: var(--seafoam);
+  }
+
+  .phase-badge.break {
+    background: rgba(14, 200, 140, 0.12);
+    border: 1px solid rgba(14, 200, 140, 0.3);
+    color: #5eeab0;
+  }
+
+  .phase-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  .work .phase-dot { background: var(--seafoam); }
+  .break .phase-dot { background: #5eeab0; }
+
+  @keyframes pulse-dot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+  }
+
+  /* Circular timer */
+  .timer-ring-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.5rem 0 2rem;
+    position: relative;
+  }
+
+  .timer-ring {
+    transform: rotate(-90deg);
+    filter: drop-shadow(0 0 12px rgba(42,191,191,0.3));
+  }
+
+  .ring-track {
+    fill: none;
+    stroke: rgba(42,191,191,0.08);
+    stroke-width: 4;
+  }
+
+  .ring-progress {
+    fill: none;
+    stroke: var(--seafoam);
+    stroke-width: 4;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear, stroke 0.5s;
+  }
+
+  .ring-progress.break-ring { stroke: #5eeab0; }
+
+  .timer-center {
+    position: absolute;
+    text-align: center;
+  }
+
+  .timer-display {
+    font-family: 'Cormorant Garant', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: var(--pearl);
+    text-shadow: 0 0 30px rgba(126, 232, 232, 0.3);
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 160px;
+    text-align: center;
+    cursor: text;
+    caret-color: var(--seafoam);
+  }
+
+  .timer-display:focus {
+    text-shadow: 0 0 30px rgba(126, 232, 232, 0.6);
+    border-bottom: 1px solid rgba(42, 191, 191, 0.35);
+  }
+
+  .timer-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-top: 0.4rem;
+  }
+
+  /* Timer controls */
+  .timer-controls {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 1.8rem;
+  }
+
+  .btn {
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    border-radius: 100px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), var(--seafoam));
+    color: var(--deep);
+    padding: 0.75rem 2.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    box-shadow: 0 4px 20px rgba(42, 191, 191, 0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(42, 191, 191, 0.45);
+  }
+
+  .btn-secondary {
+    background: rgba(42, 191, 191, 0.1);
+    color: var(--seafoam);
+    border: 1px solid var(--glass-border);
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(42, 191, 191, 0.18);
+    transform: translateY(-1px);
+  }
+
+  /* Settings */
+  .settings-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .setting-group label {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.4rem;
+  }
+
+  .setting-group input[type="number"] {
+    width: 100%;
+    background: rgba(10, 40, 70, 0.6);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 0.55rem 0.85rem;
+    color: var(--pearl);
+    font-family: 'Cormorant Garant', serif;
+    font-size: 1.3rem;
+    font-weight: 300;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .setting-group input[type="number"]:focus {
+    border-color: rgba(42, 191, 191, 0.4);
+    box-shadow: 0 0 0 3px rgba(42, 191, 191, 0.08);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { opacity: 0.3; }
+
+  /* Session count */
+  .sessions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(42,191,191,0.08);
+  }
+
+  .sessions-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+
+  .sessions-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .session-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(42,191,191,0.15);
+    border: 1px solid rgba(42,191,191,0.25);
+    transition: all 0.3s;
+  }
+
+  .session-dot.done {
+    background: var(--seafoam);
+    box-shadow: 0 0 8px rgba(42,191,191,0.5);
+  }
+
+  /* Task list */
+  .tasks-card { align-self: start; }
+
+  .tasks-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .task-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(6, 24, 48, 0.5);
+    border: 1px solid rgba(42, 191, 191, 0.08);
+    border-radius: 12px;
+    transition: all 0.25s ease;
+    animation: task-slide-in 0.3s ease;
+  }
+
+  @keyframes task-slide-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .task-item:hover {
+    border-color: rgba(42, 191, 191, 0.2);
+    background: rgba(14, 50, 80, 0.5);
+  }
+
+  .task-item.completed {
+    opacity: 0.45;
+  }
+
+  /* Custom checkbox */
+  .task-check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(42, 191, 191, 0.35);
+    background: transparent;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .task-check:checked {
+    background: linear-gradient(135deg, var(--teal), var(--seafoam));
+    border-color: transparent;
+  }
+
+  .task-check:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--deep);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .task-check:hover:not(:checked) {
+    border-color: var(--seafoam);
+    background: rgba(42,191,191,0.08);
+  }
+
+  .task-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--pearl);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+  }
+
+  .task-input::placeholder { color: rgba(200, 232, 224, 0.25); }
+
+  .task-item.completed .task-input {
+    text-decoration: line-through;
+    text-decoration-color: rgba(42,191,191,0.4);
+  }
+
+  .btn-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(42, 191, 191, 0.2);
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .btn-remove:hover {
+    color: #ff6b8a;
+    background: rgba(255, 107, 138, 0.1);
+  }
+
+  /* Add task button */
+  .btn-add-task {
+    width: 100%;
+    margin-top: 0.6rem;
+    padding: 0.65rem;
+    background: rgba(42, 191, 191, 0.05);
+    border: 1px dashed rgba(42, 191, 191, 0.2);
+    border-radius: 12px;
+    color: rgba(42, 191, 191, 0.5);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .btn-add-task:hover {
+    background: rgba(42, 191, 191, 0.1);
+    border-color: rgba(42, 191, 191, 0.4);
+    color: var(--seafoam);
+  }
+
+  /* Progress bar on tasks */
+  .tasks-progress {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .progress-bar-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(42,191,191,0.1);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--seafoam));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px rgba(42,191,191,0.4);
+  }
+
+  .progress-text {
+    font-size: 0.7rem;
+    color: var(--teal);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    min-width: 32px;
+    text-align: right;
+  }
+
+  /* Notification toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    border-radius: 100px;
+    padding: 0.8rem 2rem;
+    font-size: 0.85rem;
+    color: var(--foam);
+    letter-spacing: 0.05em;
+    z-index: 1000;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Ripple on timer finish */
+  .ripple-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .ripple-overlay.active { opacity: 1; }
+
+  .ripple-circle {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--seafoam);
+    animation: ripple-expand 1.5s ease-out forwards;
+  }
+
+  @keyframes ripple-expand {
+    to { transform: scale(200); opacity: 0; }
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .app { grid-template-columns: 1fr; padding: 1.5rem 1rem; }
+    header { grid-column: 1; }
+    .timer-display { font-size: 3rem; }
+    .logo { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ocean-bg"></div>
+<div class="particles" id="particles"></div>
+<div class="waves">
+  <div class="wave wave-1"></div>
+  <div class="wave wave-2"></div>
+  <div class="wave wave-3"></div>
+</div>
+
+<div class="ripple-overlay" id="ripple"></div>
+
+<div class="app">
+  <header>
+    <h1 class="logo">Tide <span>Focus</span></h1>
+    <p class="tagline">Flow with the rhythm of the sea</p>
+  </header>
+
+  <!-- TIMER CARD -->
+  <div class="card timer-card">
+    <div class="card-title">Pomodoro</div>
+
+    <div class="phase-badge work" id="phaseBadge">
+      <span class="phase-dot"></span>
+      <span id="phaseText">Deep Work</span>
+    </div>
+
+    <div class="timer-ring-wrap">
+      <svg class="timer-ring" width="200" height="200" viewBox="0 0 200 200">
+        <circle class="ring-track" cx="100" cy="100" r="88"/>
+        <circle class="ring-progress" id="ringProgress" cx="100" cy="100" r="88"
+          stroke-dasharray="553"
+          stroke-dashoffset="0"/>
+      </svg>
+      <div class="timer-center">
+        <input class="timer-display" id="timerDisplay" value="25:00"
+          maxlength="5" spellcheck="false"
+          onblur="parseDirectEdit(this.value)"
+          onkeydown="if(event.key==='Enter'){this.blur()}"
+          onfocus="if(!isRunning)this.select()">
+        <div class="timer-label" id="timerLabel">minutes remaining</div>
+      </div>
+    </div>
+
+    <div class="timer-controls">
+      <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">Start</button>
+      <button class="btn btn-secondary" onclick="resetTimer()">Reset</button>
+    </div>
+
+    <div class="settings-row">
+      <div class="setting-group">
+        <label>Work (min)</label>
+        <input type="number" id="workMin" value="25" min="1" max="120" onchange="settingChanged()">
+      </div>
+      <div class="setting-group">
+        <label>Break (min)</label>
+        <input type="number" id="breakMin" value="5" min="1" max="60" onchange="settingChanged()">
+      </div>
+    </div>
+
+    <div class="sessions-row">
+      <span class="sessions-label">Sessions</span>
+      <div class="sessions-dots" id="sessionDots">
+        <div class="session-dot"></div>
+        <div class="session-dot"></div>
+        <div class="session-dot"></div>
+        <div class="session-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TASKS CARD -->
+  <div class="card tasks-card">
+    <div class="card-title">Tasks</div>
+
+    <div class="tasks-progress">
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <span class="progress-text" id="progressText">0/4</span>
+    </div>
+
+    <ul class="tasks-list" id="tasksList"></ul>
+    <button class="btn-add-task" onclick="addTask()">+ Add task</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Audio Engine ───────────────────────────────────────────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx = null;
+
+function getCtx() {
+  if (!ctx) ctx = new AudioCtx();
+  return ctx;
+}
+
+function playTone(type) {
+  const ac = getCtx();
+  if (type === 'work') {
+    // Ocean bell: descending warm chimes
+    [[528, 0], [440, 0.25], [396, 0.5], [264, 0.85]].forEach(([freq, delay]) => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      const now = ac.currentTime + delay;
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.18, now + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+      osc.start(now); osc.stop(now + 1.9);
+    });
+  } else {
+    // Break done: rising hopeful chime
+    [[330, 0], [440, 0.2], [528, 0.4], [660, 0.65]].forEach(([freq, delay]) => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      const now = ac.currentTime + delay;
+      osc.connect(gain); gain.connect(ac.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.15, now + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.6);
+      osc.start(now); osc.stop(now + 1.7);
+    });
+  }
+}
+
+// ─── Timer State ─────────────────────────────────────────────────────────────
+let interval = null;
+let isRunning = false;
+let isWork = true;
+let totalSec = 0;
+let remainSec = 0;
+let sessionsCompleted = 0;
+const CIRCUMFERENCE = 553;
+
+function getWorkSec() { return parseInt(document.getElementById('workMin').value || 25) * 60; }
+function getBreakSec() { return parseInt(document.getElementById('breakMin').value || 5) * 60; }
+
+function initTimer() {
+  totalSec = isWork ? getWorkSec() : getBreakSec();
+  remainSec = totalSec;
+  renderTimer();
+}
+
+function settingChanged() {
+  if (!isRunning) initTimer();
+}
+
+function renderTimer() {
+  const m = Math.floor(remainSec / 60).toString().padStart(2, '0');
+  const s = (remainSec % 60).toString().padStart(2, '0');
+  const el = document.getElementById('timerDisplay');
+  if (document.activeElement !== el) el.value = `${m}:${s}`;
+  const progress = totalSec > 0 ? (totalSec - remainSec) / totalSec : 0;
+  document.getElementById('ringProgress').style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+  document.title = `${m}:${s} — Tide Focus`;
+}
+
+function parseDirectEdit(val) {
+  if (isRunning) return;
+  // Accept MM:SS or plain minutes like "30"
+  let m, s;
+  const parts = val.split(':');
+  if (parts.length === 2) {
+    m = parseInt(parts[0]) || 0;
+    s = parseInt(parts[1]) || 0;
+  } else {
+    m = parseInt(parts[0]) || 0;
+    s = 0;
+  }
+  m = Math.min(m, 99); s = Math.min(s, 59);
+  remainSec = m * 60 + s;
+  totalSec = remainSec;
+  renderTimer();
+}
+
+function toggleTimer() {
+  isRunning ? pauseTimer() : startTimer();
+}
+
+function startTimer() {
+  isRunning = true;
+  document.getElementById('startBtn').textContent = 'Pause';
+  interval = setInterval(tick, 1000);
+}
+
+function pauseTimer() {
+  isRunning = false;
+  document.getElementById('startBtn').textContent = 'Resume';
+  clearInterval(interval);
+}
+
+function resetTimer() {
+  clearInterval(interval);
+  isRunning = false;
+  isWork = true;
+  document.getElementById('startBtn').textContent = 'Start';
+  updatePhaseUI();
+  initTimer();
+}
+
+function tick() {
+  remainSec--;
+  if (remainSec < 0) {
+    timerDone();
+    return;
+  }
+  renderTimer();
+}
+
+function timerDone() {
+  clearInterval(interval);
+  isRunning = false;
+
+  if (isWork) {
+    playTone('work');
+    showToast('🌊 Work session complete — take a breath');
+    showRipple();
+    sessionsCompleted = Math.min(sessionsCompleted + 1, 4);
+    updateSessionDots();
+    isWork = false;
+    updatePhaseUI();
+    totalSec = getBreakSec();
+    remainSec = totalSec;
+  } else {
+    playTone('break');
+    showToast('🐚 Break over — dive back in');
+    isWork = true;
+    updatePhaseUI();
+    totalSec = getWorkSec();
+    remainSec = totalSec;
+  }
+
+  document.getElementById('startBtn').textContent = 'Start';
+  renderTimer();
+}
+
+function updatePhaseUI() {
+  const badge = document.getElementById('phaseBadge');
+  const text = document.getElementById('phaseText');
+  const ring = document.getElementById('ringProgress');
+  if (isWork) {
+    badge.className = 'phase-badge work';
+    text.textContent = 'Deep Work';
+    ring.classList.remove('break-ring');
+  } else {
+    badge.className = 'phase-badge break';
+    text.textContent = 'Ocean Break';
+    ring.classList.add('break-ring');
+  }
+}
+
+function updateSessionDots() {
+  const dots = document.querySelectorAll('.session-dot');
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('done', i < sessionsCompleted);
+  });
+}
+
+// ─── Tasks ────────────────────────────────────────────────────────────────────
+let tasks = [
+  { id: 1, text: '', done: false },
+];
+let nextId = 2;
+
+function renderTasks() {
+  const list = document.getElementById('tasksList');
+  list.innerHTML = '';
+  tasks.forEach(t => {
+    const li = document.createElement('li');
+    li.className = 'task-item' + (t.done ? ' completed' : '');
+    li.innerHTML = `
+      <input type="checkbox" class="task-check" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})">
+      <input type="text" class="task-input" placeholder="What's the task?" value="${escHtml(t.text)}"
+        oninput="updateTaskText(${t.id}, this.value)"
+        onkeydown="taskKeydown(event, ${t.id})">
+      <button class="btn-remove" onclick="removeTask(${t.id})" title="Remove task">×</button>
+    `;
+    list.appendChild(li);
+  });
+  updateProgress();
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function updateProgress() {
+  const done = tasks.filter(t => t.done).length;
+  const total = tasks.length;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done}/${total}`;
+}
+
+function addTask() {
+  tasks.push({ id: nextId++, text: '', done: false });
+  renderTasks();
+  // Focus last input
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.task-input');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 50);
+}
+
+function removeTask(id) {
+  if (tasks.length <= 1) { showToast('Need at least one task'); return; }
+  tasks = tasks.filter(t => t.id !== id);
+  renderTasks();
+}
+
+function toggleTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (t) t.done = !t.done;
+  renderTasks();
+}
+
+function updateTaskText(id, val) {
+  const t = tasks.find(t => t.id === id);
+  if (t) t.text = val;
+  updateProgress();
+}
+
+function taskKeydown(e, id) {
+  if (e.key === 'Enter') addTask();
+  if (e.key === 'Backspace' && e.target.value === '' && tasks.length > 1) {
+    removeTask(id);
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('.task-input');
+      if (inputs.length) inputs[inputs.length - 1].focus();
+    }, 50);
+  }
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ─── Ripple effect ────────────────────────────────────────────────────────────
+function showRipple() {
+  const el = document.getElementById('ripple');
+  el.innerHTML = '<div class="ripple-circle"></div>';
+  el.classList.add('active');
+  setTimeout(() => el.classList.remove('active'), 1600);
+}
+
+// ─── Particles ────────────────────────────────────────────────────────────────
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 1;
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${size}px;
+      height: ${size}px;
+      animation-duration: ${Math.random() * 18 + 14}s;
+      animation-delay: ${Math.random() * 20}s;
+      filter: blur(${Math.random() > 0.7 ? 1 : 0}px);
+      opacity: ${Math.random() * 0.5};
+    `;
+    container.appendChild(p);
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+createParticles();
+initTimer();
+renderTasks();
+</script>
+</body>
+</html>
