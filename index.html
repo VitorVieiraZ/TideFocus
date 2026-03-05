@@ -296,27 +296,103 @@
       position: relative;
     }
 
+    .timer-ring-wrap::before {
+      content: '';
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+          rgba(42, 191, 191, 0.06) 0%,
+          rgba(42, 191, 191, 0.02) 50%,
+          transparent 70%);
+      animation: ripple-glow 4s ease-in-out infinite;
+    }
+
+    @keyframes ripple-glow {
+
+      0%,
+      100% {
+        transform: scale(0.95);
+        opacity: 0.7;
+      }
+
+      50% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+    }
+
     .timer-ring {
       transform: rotate(-90deg);
-      filter: drop-shadow(0 0 12px rgba(42, 191, 191, 0.3));
+      filter: drop-shadow(0 0 8px rgba(42, 191, 191, 0.2));
+      overflow: visible;
     }
 
+    /* Outer decorative ripple rings */
+    .ring-ripple {
+      fill: none;
+      stroke: rgba(42, 191, 191, 0.06);
+      stroke-width: 1;
+    }
+
+    .ring-ripple-1 {
+      animation: ocean-ripple 6s ease-in-out infinite;
+    }
+
+    .ring-ripple-2 {
+      animation: ocean-ripple 6s ease-in-out 2s infinite;
+    }
+
+    .ring-ripple-3 {
+      animation: ocean-ripple 6s ease-in-out 4s infinite;
+    }
+
+    @keyframes ocean-ripple {
+      0% {
+        stroke-opacity: 0;
+        transform: scale(0.92);
+      }
+
+      30% {
+        stroke-opacity: 0.12;
+      }
+
+      100% {
+        stroke-opacity: 0;
+        transform: scale(1.15);
+      }
+    }
+
+    /* Main track — wavy dashed circle */
     .ring-track {
       fill: none;
-      stroke: rgba(42, 191, 191, 0.08);
-      stroke-width: 4;
+      stroke: rgba(42, 191, 191, 0.10);
+      stroke-width: 3;
+      stroke-dasharray: 8 4;
     }
 
+    /* Inner glow ring */
+    .ring-inner-glow {
+      fill: none;
+      stroke: rgba(42, 191, 191, 0.04);
+      stroke-width: 12;
+    }
+
+    /* Progress arc */
     .ring-progress {
       fill: none;
       stroke: var(--seafoam);
-      stroke-width: 4;
+      stroke-width: 3.5;
       stroke-linecap: round;
+      stroke-dasharray: 8 4;
       transition: stroke-dashoffset 1s linear, stroke 0.5s;
+      filter: drop-shadow(0 0 6px rgba(42, 191, 191, 0.5));
     }
 
     .ring-progress.break-ring {
       stroke: #5eeab0;
+      filter: drop-shadow(0 0 6px rgba(94, 234, 176, 0.5));
     }
 
     .timer-center {
@@ -1104,9 +1180,17 @@
       </div>
 
       <div class="timer-ring-wrap">
-        <svg class="timer-ring" width="200" height="200" viewBox="0 0 200 200">
-          <circle class="ring-track" cx="100" cy="100" r="88" />
-          <circle class="ring-progress" id="ringProgress" cx="100" cy="100" r="88" stroke-dasharray="553"
+        <svg class="timer-ring" width="260" height="260" viewBox="0 0 260 260">
+          <!-- Expanding ripple rings -->
+          <circle class="ring-ripple ring-ripple-1" cx="130" cy="130" r="118" />
+          <circle class="ring-ripple ring-ripple-2" cx="130" cy="130" r="122" />
+          <circle class="ring-ripple ring-ripple-3" cx="130" cy="130" r="126" />
+          <!-- Inner glow -->
+          <circle class="ring-inner-glow" cx="130" cy="130" r="102" />
+          <!-- Dashed wave track -->
+          <circle class="ring-track" cx="130" cy="130" r="102" />
+          <!-- Progress arc -->
+          <circle class="ring-progress" id="ringProgress" cx="130" cy="130" r="102" stroke-dasharray="641"
             stroke-dashoffset="0" />
         </svg>
         <div class="timer-center">
@@ -1170,7 +1254,7 @@
     let totalSec = 0;
     let remainSec = 0;
     let sessionsCompleted = 0;
-    const CIRCUMFERENCE = 553;
+    const CIRCUMFERENCE = 641;
 
     function getWorkSec() { return parseInt(document.getElementById('workMin').value || 25) * 60; }
     function getBreakSec() { return parseInt(document.getElementById('breakMin').value || 5) * 60; }
