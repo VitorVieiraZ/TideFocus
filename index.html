@@ -784,7 +784,7 @@
       align-items: flex-end;
       gap: 2px;
       height: 14px;
-      opacity: 0;
+      opacity: 0.45;
       transition: opacity 0.3s;
       pointer-events: none;
     }
@@ -798,6 +798,10 @@
       width: 3px;
       background: var(--seafoam);
       border-radius: 1px;
+      transition: transform 0.3s;
+    }
+
+    .wave-bars.active span {
       animation: wave-bar 1.2s ease-in-out infinite;
     }
 
@@ -999,6 +1003,14 @@
       box-shadow: 0 0 6px rgba(42, 191, 191, 0.5);
     }
 
+    @media (max-width: 700px) {
+      .music-player {
+        position: static;
+        margin: 0.5rem auto 0;
+        width: fit-content;
+      }
+    }
+
     #yt-player {
       position: fixed;
       top: -9999px;
@@ -1021,58 +1033,6 @@
 
   <div id="yt-player"></div>
 
-  <div class="music-player minimized" id="musicPlayer">
-    <div class="music-header" onclick="toggleSoundscape(event)">
-      <span class="music-title">Soundscape</span>
-      <div class="wave-bars" id="waveBars">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-
-    </div>
-    <div class="music-body">
-      <div class="track-list">
-        <button class="track-btn" onclick="selectTrack(0)" id="track-0">
-          <span class="track-icon">🎵</span>
-          <div class="track-info">
-            <span class="track-name">Lo-fi Ocean</span>
-            <span class="track-desc">YouTube · ambient mix</span>
-          </div>
-        </button>
-        <button class="track-btn" onclick="selectTrack(1)" id="track-1">
-          <span class="track-icon">🌊</span>
-          <div class="track-info">
-            <span class="track-name">Ocean Waves</span>
-            <span class="track-desc">Synthesized · surf &amp; tide</span>
-          </div>
-        </button>
-        <button class="track-btn" onclick="selectTrack(2)" id="track-2">
-          <span class="track-icon">🟤</span>
-          <div class="track-info">
-            <span class="track-name">Brown Noise</span>
-            <span class="track-desc">Synthesized · deep focus</span>
-          </div>
-        </button>
-        <button class="track-btn" onclick="selectTrack(3)" id="track-3">
-          <span class="track-icon">⚡</span>
-          <div class="track-info">
-            <span class="track-name">Gamma Waves</span>
-            <span class="track-desc">40 Hz · cognitive boost</span>
-          </div>
-        </button>
-        <button class="track-btn" onclick="selectTrack(4)" id="track-4">
-          <span class="track-icon">✨</span>
-          <div class="track-info">
-            <span class="track-name">Limitless</span>
-            <span class="track-desc">Generative · never repeats</span>
-          </div>
-        </button>
-      </div>
-      <div class="vol-row">
-        <label>Vol</label>
-        <input type="range" id="volSlider" min="0" max="100" value="35" oninput="setVolume(this.value)">
-      </div>
-    </div>
-  </div>
 
   <div class="ripple-overlay" id="ripple"></div>
 
@@ -1080,6 +1040,58 @@
     <header>
       <h1 class="logo">Tide <span>Focus</span></h1>
       <p class="tagline">Flow with the rhythm of the sea</p>
+
+      <div class="music-player minimized" id="musicPlayer">
+        <div class="music-header" onclick="toggleSoundscape(event)">
+          <span class="music-title">Soundscape</span>
+          <div class="wave-bars" id="waveBars">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="music-body">
+          <div class="track-list">
+            <button class="track-btn" onclick="selectTrack(0)" id="track-0">
+              <span class="track-icon">🎵</span>
+              <div class="track-info">
+                <span class="track-name">Lo-fi Ocean</span>
+                <span class="track-desc">YouTube · ambient mix</span>
+              </div>
+            </button>
+            <button class="track-btn" onclick="selectTrack(1)" id="track-1">
+              <span class="track-icon">🌊</span>
+              <div class="track-info">
+                <span class="track-name">Ocean Waves</span>
+                <span class="track-desc">Synthesized · surf &amp; tide</span>
+              </div>
+            </button>
+            <button class="track-btn" onclick="selectTrack(2)" id="track-2">
+              <span class="track-icon">🟤</span>
+              <div class="track-info">
+                <span class="track-name">Brown Noise</span>
+                <span class="track-desc">Synthesized · deep focus</span>
+              </div>
+            </button>
+            <button class="track-btn" onclick="selectTrack(3)" id="track-3">
+              <span class="track-icon">⚡</span>
+              <div class="track-info">
+                <span class="track-name">Gamma Waves</span>
+                <span class="track-desc">40 Hz · cognitive boost</span>
+              </div>
+            </button>
+            <button class="track-btn" onclick="selectTrack(4)" id="track-4">
+              <span class="track-icon">✨</span>
+              <div class="track-info">
+                <span class="track-name">Limitless</span>
+                <span class="track-desc">Generative · never repeats</span>
+              </div>
+            </button>
+          </div>
+          <div class="vol-row">
+            <label>Vol</label>
+            <input type="range" id="volSlider" min="0" max="100" value="35" oninput="setVolume(this.value)">
+          </div>
+        </div>
+      </div>
     </header>
 
     <!-- TIMER CARD -->
@@ -1703,10 +1715,8 @@
     }
 
     function updateWaveBars() {
-      const player = document.getElementById('musicPlayer');
       const bars = document.getElementById('waveBars');
-      const isMinimized = player.classList.contains('minimized');
-      bars.classList.toggle('active', isPlaying && isMinimized);
+      bars.classList.toggle('active', isPlaying);
     }
 
     function setVolume(val) {
