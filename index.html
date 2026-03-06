@@ -1391,10 +1391,23 @@
     }
 
     // ─── Tasks ────────────────────────────────────────────────────────────────────
-    let tasks = [
-      { id: 1, text: '', done: false },
-    ];
-    let nextId = 2;
+    function loadTasks() {
+      try {
+        const saved = localStorage.getItem('tideFocusTasks');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) { /* ignore corrupt data */ }
+      return [{ id: 1, text: '', done: false }];
+    }
+
+    function saveTasks() {
+      try { localStorage.setItem('tideFocusTasks', JSON.stringify(tasks)); } catch (e) { }
+    }
+
+    let tasks = loadTasks();
+    let nextId = tasks.reduce((max, t) => Math.max(max, t.id), 0) + 1;
 
     function renderTasks() {
       const list = document.getElementById('tasksList');
@@ -1412,6 +1425,7 @@
         list.appendChild(li);
       });
       updateProgress();
+      saveTasks();
     }
 
     function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -1447,9 +1461,10 @@
     }
 
     function updateTaskText(id, val) {
-      const t = tasks.find(t => t.id === id);
+      const t = tasks.find(tk => tk.id === id);
       if (t) t.text = val;
       updateProgress();
+      saveTasks();
     }
 
     function taskKeydown(e, id) {
