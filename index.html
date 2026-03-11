@@ -67,7 +67,6 @@
       background: var(--seafoam);
       opacity: 0;
       animation: float-up linear infinite;
-      will-change: transform, opacity;
     }
 
     @keyframes float-up {
@@ -127,7 +126,6 @@
       background: rgba(42, 191, 191, 0.06);
       height: 80px;
       animation-duration: 6s;
-      will-change: transform;
     }
 
     @keyframes wave-move {
@@ -768,9 +766,8 @@
       bottom: 2rem;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: var(--glass);
+      background: rgba(10, 40, 70, 0.9);
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px);
       border-radius: 100px;
       padding: 0.8rem 2rem;
       font-size: 0.85rem;
@@ -861,9 +858,8 @@
       top: 1.5rem;
       right: 1.5rem;
       z-index: 100;
-      background: var(--glass);
+      background: rgba(10, 40, 70, 0.85);
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px);
       border-radius: 20px;
       padding: 0.85rem 1rem;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -1968,7 +1964,7 @@
     // ─── Particles ────────────────────────────────────────────────────────────────
     function createParticles() {
       const container = document.getElementById('particles');
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 4; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
         const size = Math.random() * 4 + 1;
@@ -1978,7 +1974,6 @@
       height: ${size}px;
       animation-duration: ${Math.random() * 18 + 14}s;
       animation-delay: ${Math.random() * 20}s;
-      filter: blur(${Math.random() > 0.7 ? 1 : 0}px);
       opacity: ${Math.random() * 0.5};
     `;
         container.appendChild(p);
