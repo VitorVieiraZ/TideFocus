@@ -2093,6 +2093,7 @@
     // ── YouTube (track 0) ──
     let ytPlayer = null, ytReady = false;
     let ytApiLoading = false;
+    let pendingTrack = -1;  // Track index to auto-play when YouTube becomes ready
 
     function loadYouTubeAPI() {
       if (ytReady || ytApiLoading) return;
@@ -2107,9 +2108,17 @@
         videoId: '4MFOBeUCPkw',
         playerVars: { autoplay: 0, loop: 1, playlist: '4MFOBeUCPkw', controls: 0, disablekb: 1, fs: 0 },
         events: {
-          onReady: e => { ytReady = true; e.target.setVolume(getVolPct()); },
+          onReady: e => {
+            ytReady = true;
+            e.target.setVolume(getVolPct());
+            // Auto-play if a track was pending
+            if (pendingTrack === 0 && isPlaying) {
+              ytPlayer.setVolume(getVolPct());
+              ytPlayer.playVideo();
+              pendingTrack = -1;
+            }
+          },
           onStateChange: e => {
-            // Prevent loop-triggered auto-resume when user has stopped playback
             if (e.data === YT.PlayerState.ENDED && !isPlaying) {
               ytPlayer.pauseVideo();
             }
@@ -2290,9 +2299,13 @@
       masterGainNode.connect(ac.destination);
 
       if (currentTrack === 0) {
-        loadYouTubeAPI();  // Lazy-load if not yet loaded
-        if (ytReady) { ytPlayer.setVolume(getVolPct()); ytPlayer.playVideo(); }
-        else showToast('YouTube loading… try again in a moment');
+        loadYouTubeAPI();
+        if (ytReady) {
+          ytPlayer.setVolume(getVolPct());
+          ytPlayer.playVideo();
+        } else {
+          pendingTrack = 0;
+        }
       } else if (currentTrack === 1) {
         activeNodes.push(buildOcean(ac, masterGainNode));
       } else if (currentTrack === 2) {
@@ -2300,24 +2313,15 @@
       } else if (currentTrack === 3) {
         activeNodes.push(buildGamma(ac, masterGainNode));
       } else if (currentTrack === 4) {
-        // Limitless: play the YouTube video at a random point
-        loadYouTubeAPI();  // Lazy-load if not yet loaded
-        if (ytReady) {
-          const duration = ytPlayer.getDuration() || 3600;
-          const randomTime = Math.floor(Math.random() * (duration - 60));
-          ytPlayer.setVolume(getVolPct());
-          ytPlayer.seekTo(randomTime, true);
-          ytPlayer.playVideo();
-        } else {
-          showToast('YouTube loading… try again in a moment');
-        }
+        activeNodes.push(buildLimitless(ac, masterGainNode));
       }
     }
 
     function stopCurrentTrack(instant) {
-      if ((currentTrack === 0 || currentTrack === 4) && ytReady && ytPlayer) {
+      pendingTrack = -1;
+      if (currentTrack === 0 && ytReady && ytPlayer) {
         ytPlayer.pauseVideo();
-        ytPlayer.seekTo(0, true);  // Reset position to prevent loop-triggered auto-resume
+        ytPlayer.seekTo(0, true);
       }
       if (masterGainNode && !instant) {
         const ac = getCtx();
@@ -2379,7 +2383,7 @@
         const ac = getCtx();
         masterGainNode.gain.linearRampToValueAtTime(v * 0.75, ac.currentTime + 0.1);
       }
-      if ((currentTrack === 0 || currentTrack === 4) && ytReady && ytPlayer) ytPlayer.setVolume(parseInt(val));
+      if (currentTrack === 0 && ytReady && ytPlayer) ytPlayer.setVolume(parseInt(val));
     }
     // ─── Free Notes Engine (Rich Text) ────────────────────────────────────────
     let notesTabs = [];
