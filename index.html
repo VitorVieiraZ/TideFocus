@@ -2338,7 +2338,8 @@
 
     function stopCurrentTrack(instant) {
       pendingTrack = -1;
-      if (currentTrack === 0 && ytReady && ytPlayer) {
+      // Always stop YouTube to prevent audio bleed between tracks
+      if (ytReady && ytPlayer) {
         ytPlayer.pauseVideo();
         ytPlayer.seekTo(0, true);
       }
