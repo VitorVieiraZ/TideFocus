@@ -1626,6 +1626,13 @@
                 <span class="track-desc">Generative · never repeats</span>
               </div>
             </button>
+            <button class="track-btn" onclick="selectTrack(5)" id="track-5">
+              <span class="track-icon">🎧</span>
+              <div class="track-info">
+                <span class="track-name">Lo-fi Beats</span>
+                <span class="track-desc">YouTube · chill beats</span>
+              </div>
+            </button>
           </div>
           <div class="vol-row">
             <label>Vol</label>
@@ -2103,7 +2110,8 @@
     }
 
     // ─── Multi-track Soundscape ───────────────────────────────────────────────────
-    // tracks: 0=youtube  1=ocean  2=brown  3=gamma  4=limitless
+    // tracks: 0=youtube(lofi ocean)  1=ocean  2=brown  3=gamma  4=limitless  5=youtube(lofi beats)
+    const ytVideoIds = { 0: '4MFOBeUCPkw', 5: 'jfKfPfyJRdk' };
     let currentTrack = 0;
     let isPlaying = false;
     let activeNodes = [];
@@ -2131,9 +2139,10 @@
             ytReady = true;
             e.target.setVolume(getVolPct());
             // Auto-play if a track was pending
-            if (pendingTrack === 0 && isPlaying) {
+            if (pendingTrack >= 0 && isPlaying && ytVideoIds[pendingTrack]) {
+              const videoId = ytVideoIds[pendingTrack];
+              ytPlayer.loadVideoById({ videoId: videoId, startSeconds: 0 });
               ytPlayer.setVolume(getVolPct());
-              ytPlayer.playVideo();
               pendingTrack = -1;
             }
           },
@@ -2317,13 +2326,20 @@
       masterGainNode.gain.linearRampToValueAtTime(getVolPct() / 100 * 0.75, ac.currentTime + 1.5);
       masterGainNode.connect(ac.destination);
 
-      if (currentTrack === 0) {
+      if (currentTrack === 0 || currentTrack === 5) {
+        const videoId = ytVideoIds[currentTrack];
         loadYouTubeAPI();
         if (ytReady) {
+          // Load correct video if different from current
+          const currentVideoUrl = ytPlayer.getVideoUrl && ytPlayer.getVideoUrl();
+          if (!currentVideoUrl || !currentVideoUrl.includes(videoId)) {
+            ytPlayer.loadVideoById({ videoId: videoId, startSeconds: 0 });
+          } else {
+            ytPlayer.playVideo();
+          }
           ytPlayer.setVolume(getVolPct());
-          ytPlayer.playVideo();
         } else {
-          pendingTrack = 0;
+          pendingTrack = currentTrack;
         }
       } else if (currentTrack === 1) {
         activeNodes.push(buildOcean(ac, masterGainNode));
@@ -2403,7 +2419,7 @@
         const ac = getCtx();
         masterGainNode.gain.linearRampToValueAtTime(v * 0.75, ac.currentTime + 0.1);
       }
-      if (currentTrack === 0 && ytReady && ytPlayer) ytPlayer.setVolume(parseInt(val));
+      if ((currentTrack === 0 || currentTrack === 5) && ytReady && ytPlayer) ytPlayer.setVolume(parseInt(val));
     }
     // ─── Free Notes Engine (Rich Text) ────────────────────────────────────────
     let notesTabs = [];
