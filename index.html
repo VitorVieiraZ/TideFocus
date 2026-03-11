@@ -1151,20 +1151,36 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(126, 232, 232, 0.08);
     }
 
-    /* Tabs bar */
+    /* Tabs bar - vertical sidebar on right */
+    .notes-content-area {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .notes-main {
+      flex: 1;
+      min-width: 0;
+    }
+
     .notes-tabs-bar {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: stretch;
       gap: 0.4rem;
-      margin-bottom: 1.2rem;
-      overflow-x: auto;
-      padding-bottom: 0.3rem;
+      padding: 0.5rem;
+      width: 120px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      max-height: 480px;
       scrollbar-width: thin;
       scrollbar-color: rgba(42, 191, 191, 0.15) transparent;
+      background: rgba(6, 24, 48, 0.3);
+      border-radius: 14px;
+      border: 1px solid rgba(42, 191, 191, 0.08);
     }
 
     .notes-tabs-bar::-webkit-scrollbar {
-      height: 4px;
+      width: 4px;
     }
 
     .notes-tabs-bar::-webkit-scrollbar-thumb {
@@ -1175,19 +1191,19 @@
     .notes-tab {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.45rem 1rem;
-      border-radius: 100px;
+      gap: 0.35rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: 10px;
       border: 1px solid rgba(42, 191, 191, 0.12);
       background: rgba(6, 24, 48, 0.5);
       color: var(--teal);
       font-family: 'DM Sans', sans-serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
-      flex-shrink: 0;
+      overflow: hidden;
     }
 
     .notes-tab:hover {
@@ -1234,9 +1250,9 @@
     }
 
     .btn-add-tab {
-      width: 28px;
+      width: 100%;
       height: 28px;
-      border-radius: 50%;
+      border-radius: 10px;
       border: 1px dashed rgba(42, 191, 191, 0.25);
       background: transparent;
       color: rgba(42, 191, 191, 0.45);
@@ -1456,6 +1472,18 @@
         padding: 0 1rem 1.5rem;
       }
 
+      .notes-content-area {
+        flex-direction: column;
+      }
+
+      .notes-tabs-bar {
+        width: 100%;
+        max-height: none;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+
       .notes-editor {
         min-height: 260px;
         padding: 1rem;
@@ -1639,45 +1667,50 @@
           notes</button>
       </div>
 
-      <div class="notes-tabs-bar" id="notesTabsBar"></div>
+      <div class="notes-content-area">
+        <div class="notes-main">
+          <div class="notes-toolbar" id="notesToolbar">
+            <select onchange="notesExec('formatBlock',this.value);this.selectedIndex=0" title="Heading">
+              <option value="" disabled selected>Heading</option>
+              <option value="h1">Heading 1</option>
+              <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
+              <option value="p">Paragraph</option>
+            </select>
+            <div class="tool-sep"></div>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('bold')"
+              title="Bold (⌘B)"><b>B</b></button>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('italic')"
+              title="Italic (⌘I)"><i>I</i></button>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('underline')"
+              title="Underline (⌘U)"><u>U</u></button>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('strikeThrough')"
+              title="Strikethrough"><s>S</s></button>
+            <div class="tool-sep"></div>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('insertUnorderedList')"
+              title="Bullet list">• List</button>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('insertOrderedList')"
+              title="Numbered list">1. List</button>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesQuote()" title="Blockquote">❝
+              Quote</button>
+            <div class="tool-sep"></div>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesInsertLink()"
+              title="Insert link">🔗
+              Link</button>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesInsertHR()"
+              title="Horizontal rule">― Line</button>
+            <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesAddImage()"
+              title="Insert image">🖼
+              Image</button>
+            <div class="tool-sep"></div>
+            <input type="color" id="notesColor" value="#e8f6f5" title="Text color"
+              onchange="notesExec('foreColor',this.value)">
+          </div>
 
-      <div class="notes-toolbar" id="notesToolbar">
-        <select onchange="notesExec('formatBlock',this.value);this.selectedIndex=0" title="Heading">
-          <option value="" disabled selected>Heading</option>
-          <option value="h1">Heading 1</option>
-          <option value="h2">Heading 2</option>
-          <option value="h3">Heading 3</option>
-          <option value="p">Paragraph</option>
-        </select>
-        <div class="tool-sep"></div>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('bold')"
-          title="Bold (⌘B)"><b>B</b></button>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('italic')"
-          title="Italic (⌘I)"><i>I</i></button>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('underline')"
-          title="Underline (⌘U)"><u>U</u></button>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('strikeThrough')"
-          title="Strikethrough"><s>S</s></button>
-        <div class="tool-sep"></div>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('insertUnorderedList')"
-          title="Bullet list">• List</button>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesExec('insertOrderedList')"
-          title="Numbered list">1. List</button>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesQuote()" title="Blockquote">❝
-          Quote</button>
-        <div class="tool-sep"></div>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesInsertLink()" title="Insert link">🔗
-          Link</button>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesInsertHR()"
-          title="Horizontal rule">― Line</button>
-        <button class="tool-btn" onmousedown="event.preventDefault()" onclick="notesAddImage()" title="Insert image">🖼
-          Image</button>
-        <div class="tool-sep"></div>
-        <input type="color" id="notesColor" value="#e8f6f5" title="Text color"
-          onchange="notesExec('foreColor',this.value)">
+          <div class="notes-editor" id="notesEditor" contenteditable="true" spellcheck="true"></div>
+        </div>
+        <div class="notes-tabs-bar" id="notesTabsBar"></div>
       </div>
-
-      <div class="notes-editor" id="notesEditor" contenteditable="true" spellcheck="true"></div>
     </div>
   </div>
 
