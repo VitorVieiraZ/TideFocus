@@ -2115,7 +2115,7 @@
 
     // ─── Multi-track Soundscape ───────────────────────────────────────────────────
     // tracks: 0=youtube(lofi ocean)  1=ocean  2=brown  3=gamma  4=limitless  5=youtube(lofi beats)
-    const ytVideoIds = { 0: '4MFOBeUCPkw', 5: 'jfKfPfyJRdk' };
+    const ytVideoIds = { 0: '4MFOBeUCPkw', 4: '4MFOBeUCPkw', 5: 'jfKfPfyJRdk' };
     let currentTrack = 0;
     let isPlaying = false;
     let activeNodes = [];
@@ -2330,7 +2330,7 @@
       masterGainNode.gain.linearRampToValueAtTime(getVolPct() / 100 * 0.75, ac.currentTime + 1.5);
       masterGainNode.connect(ac.destination);
 
-      if (currentTrack === 0 || currentTrack === 5) {
+      if (ytVideoIds[currentTrack]) {
         const videoId = ytVideoIds[currentTrack];
         loadYouTubeAPI();
         if (ytReady) {
@@ -2351,8 +2351,6 @@
         activeNodes.push(buildBrown(ac, masterGainNode));
       } else if (currentTrack === 3) {
         activeNodes.push(buildGamma(ac, masterGainNode));
-      } else if (currentTrack === 4) {
-        activeNodes.push(buildLimitless(ac, masterGainNode));
       }
     }
 
@@ -2423,7 +2421,7 @@
         const ac = getCtx();
         masterGainNode.gain.linearRampToValueAtTime(v * 0.75, ac.currentTime + 0.1);
       }
-      if ((currentTrack === 0 || currentTrack === 5) && ytReady && ytPlayer) ytPlayer.setVolume(parseInt(val));
+      if (ytVideoIds[currentTrack] && ytReady && ytPlayer) ytPlayer.setVolume(parseInt(val));
     }
     // ─── Free Notes Engine (Rich Text) ────────────────────────────────────────
     let notesTabs = [];
