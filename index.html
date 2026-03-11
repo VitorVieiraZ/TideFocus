@@ -696,6 +696,39 @@
       color: var(--seafoam);
     }
 
+    /* Task footer row */
+    .tasks-footer {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .tasks-footer .btn-add-task {
+      margin-top: 0;
+    }
+
+    /* Clear all button */
+    .btn-clear-all {
+      padding: 0.65rem 1rem;
+      background: rgba(255, 107, 138, 0.06);
+      border: 1px dashed rgba(255, 107, 138, 0.2);
+      border-radius: 12px;
+      color: rgba(255, 107, 138, 0.5);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-clear-all:hover {
+      background: rgba(255, 107, 138, 0.12);
+      border-color: rgba(255, 107, 138, 0.4);
+      color: #ff6b8a;
+    }
+
     /* Progress bar on tasks */
     .tasks-progress {
       margin-bottom: 1rem;
@@ -1588,14 +1621,23 @@
       </div>
 
       <ul class="tasks-list" id="tasksList"></ul>
-      <button class="btn-add-task" onclick="addTask()">+ Add task</button>
+      <div class="tasks-footer">
+        <button class="btn-add-task" onclick="addTask()">+ Add task</button>
+        <button class="btn-clear-all" onclick="clearAllTasks()">Clear all</button>
+      </div>
     </div>
   </div>
 
   <!-- FREE NOTES SECTION -->
   <div class="notes-section">
     <div class="notes-card">
-      <div class="card-title">Free Notes</div>
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span style="display:flex;align-items:center;gap:0.6rem"><span
+            style="display:inline-block;width:20px;height:1px;background:var(--seafoam);opacity:0.5"></span>Free
+          Notes</span>
+        <button class="btn-clear-all" onclick="clearAllNotes()" style="font-size:0.62rem;padding:0.35rem 0.7rem">Clear
+          notes</button>
+      </div>
 
       <div class="notes-tabs-bar" id="notesTabsBar"></div>
 
@@ -1863,6 +1905,13 @@
           if (inputs.length) inputs[inputs.length - 1].focus();
         }, 50);
       }
+    }
+
+    function clearAllTasks() {
+      if (!confirm('Clear all tasks?')) return;
+      tasks = [{ id: nextId++, text: '', done: false }];
+      renderTasks();
+      showToast('🧹 Tasks cleared');
     }
 
     // ─── Toast ────────────────────────────────────────────────────────────────────
@@ -2449,6 +2498,14 @@
       }
       // For non-image paste, let default happen then debounce save
       setTimeout(debouncedSave, 50);
+    }
+
+    function clearAllNotes() {
+      if (!confirm('Clear all notes? This will delete all tabs.')) return;
+      notesTabs = [];
+      activeTabId = null;
+      addNoteTab('Note 1');
+      showToast('🧹 Notes cleared');
     }
 
     // Init notes
