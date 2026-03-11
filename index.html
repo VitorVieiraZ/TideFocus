@@ -1279,6 +1279,57 @@
       background: rgba(6, 24, 48, 0.5);
       border: 1px solid rgba(42, 191, 191, 0.1);
       border-bottom: none;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      margin-bottom: 0;
+      padding: 0 0.6rem;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        padding 0.35s ease,
+        margin-bottom 0.35s ease;
+    }
+
+    .notes-toolbar.visible {
+      max-height: 120px;
+      opacity: 1;
+      padding: 0.5rem 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Ocean toggle button for toolbar */
+    .notes-toolbar-toggle {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      width: 38px;
+      height: 24px;
+      border-radius: 50%/40%;
+      border: 1px solid rgba(42, 191, 191, 0.25);
+      background: rgba(6, 24, 48, 0.6);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 2;
+      padding: 0;
+    }
+
+    .notes-toolbar-toggle:hover {
+      border-color: rgba(42, 191, 191, 0.5);
+      background: rgba(42, 191, 191, 0.1);
+      box-shadow: 0 0 12px rgba(42, 191, 191, 0.15);
+    }
+
+    .notes-toolbar-toggle.active {
+      background: rgba(42, 191, 191, 0.15);
+      border-color: rgba(42, 191, 191, 0.4);
+    }
+
+    .notes-toolbar-toggle svg {
+      width: 22px;
+      height: 14px;
     }
 
     .notes-toolbar .tool-btn {
@@ -1664,7 +1715,16 @@
       </div>
 
       <div class="notes-content-area">
-        <div class="notes-main">
+        <div class="notes-main" style="position:relative">
+          <button class="notes-toolbar-toggle" id="notesToolbarToggle" onclick="toggleNotesToolbar()"
+            title="Toggle formatting tools">
+            <svg viewBox="0 0 30 16" fill="none">
+              <path d="M0 10 Q5 4 10 8 T20 6 T30 9" stroke="var(--seafoam)" stroke-width="1.5" fill="none"
+                opacity="0.7" />
+              <path d="M0 13 Q7 7 14 11 T28 8" stroke="var(--teal)" stroke-width="1" fill="none" opacity="0.5" />
+              <path d="M2 6 Q8 2 15 5 T27 4" stroke="var(--foam)" stroke-width="1" fill="none" opacity="0.35" />
+            </svg>
+          </button>
           <div class="notes-toolbar" id="notesToolbar">
             <select onchange="notesExec('formatBlock',this.value);this.selectedIndex=0" title="Heading">
               <option value="" disabled selected>Heading</option>
@@ -1703,7 +1763,8 @@
               onchange="notesExec('foreColor',this.value)">
           </div>
 
-          <div class="notes-editor" id="notesEditor" contenteditable="true" spellcheck="true"></div>
+          <div class="notes-editor" id="notesEditor" contenteditable="true" spellcheck="true"
+            style="border-radius:14px"></div>
         </div>
         <div class="notes-tabs-bar" id="notesTabsBar"></div>
       </div>
@@ -2506,6 +2567,15 @@
       };
       reader.readAsDataURL(file);
       e.target.value = '';
+    }
+
+    function toggleNotesToolbar() {
+      const toolbar = document.getElementById('notesToolbar');
+      const toggle = document.getElementById('notesToolbarToggle');
+      const editor = document.getElementById('notesEditor');
+      const isVisible = toolbar.classList.toggle('visible');
+      toggle.classList.toggle('active', isVisible);
+      editor.style.borderRadius = isVisible ? '0 0 14px 14px' : '14px';
     }
 
     // Paste handler: allow images pasted from clipboard
