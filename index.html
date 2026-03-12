@@ -2333,13 +2333,8 @@
         const videoId = ytVideoIds[currentTrack];
         loadYouTubeAPI();
         if (ytReady) {
-          // Load correct video if different from current
-          const currentVideoUrl = ytPlayer.getVideoUrl && ytPlayer.getVideoUrl();
-          if (!currentVideoUrl || !currentVideoUrl.includes(videoId)) {
-            ytPlayer.loadVideoById({ videoId: videoId, startSeconds: getStartSeconds(currentTrack) });
-          } else {
-            ytPlayer.playVideo();
-          }
+          // Always reload for Limitless (track 4) so it gets a fresh random start
+          ytPlayer.loadVideoById({ videoId: videoId, startSeconds: getStartSeconds(currentTrack) });
           ytPlayer.setVolume(getVolPct());
         } else {
           pendingTrack = currentTrack;
