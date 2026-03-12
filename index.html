@@ -2392,8 +2392,8 @@
     }
 
     function updateTrackUI(activeIdx) {
-      document.querySelectorAll('.track-btn').forEach((b, i) => {
-        b.classList.toggle('playing', i === activeIdx);
+      document.querySelectorAll('.track-btn').forEach(b => {
+        b.classList.toggle('playing', b.id === 'track-' + activeIdx);
       });
     }
 
