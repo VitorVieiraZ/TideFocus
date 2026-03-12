@@ -2114,6 +2114,7 @@
     // ─── Multi-track Soundscape ───────────────────────────────────────────────────
     // tracks: 0=youtube(lofi ocean)  1=ocean  2=brown  3=gamma  4=limitless  5=youtube(lofi beats)
     const ytVideoIds = { 0: '4MFOBeUCPkw', 4: '4MFOBeUCPkw', 5: 'jfKfPfyJRdk' };
+    function getStartSeconds(track) { return track === 4 ? Math.floor(Math.random() * 3600) : 0; }
     let currentTrack = 0;
     let isPlaying = false;
     let activeNodes = [];
@@ -2143,7 +2144,7 @@
             // Auto-play if a track was pending
             if (pendingTrack >= 0 && isPlaying && ytVideoIds[pendingTrack]) {
               const videoId = ytVideoIds[pendingTrack];
-              ytPlayer.loadVideoById({ videoId: videoId, startSeconds: 0 });
+              ytPlayer.loadVideoById({ videoId: videoId, startSeconds: getStartSeconds(pendingTrack) });
               ytPlayer.setVolume(getVolPct());
               pendingTrack = -1;
             }
@@ -2335,7 +2336,7 @@
           // Load correct video if different from current
           const currentVideoUrl = ytPlayer.getVideoUrl && ytPlayer.getVideoUrl();
           if (!currentVideoUrl || !currentVideoUrl.includes(videoId)) {
-            ytPlayer.loadVideoById({ videoId: videoId, startSeconds: 0 });
+            ytPlayer.loadVideoById({ videoId: videoId, startSeconds: getStartSeconds(currentTrack) });
           } else {
             ytPlayer.playVideo();
           }
