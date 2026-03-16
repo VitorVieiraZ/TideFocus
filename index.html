@@ -216,6 +216,63 @@
       opacity: 0.5;
     }
 
+    /* Timer card tabs */
+    .timer-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.8rem;
+      border-bottom: 1px solid rgba(42, 191, 191, 0.1);
+      position: relative;
+    }
+
+    .timer-tab {
+      flex: 1;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal);
+      padding: 0.6rem 0.5rem;
+      transition: color 0.3s, opacity 0.3s;
+      opacity: 0.6;
+      position: relative;
+    }
+
+    .timer-tab:hover {
+      opacity: 0.85;
+      color: var(--sand);
+    }
+
+    .timer-tab.active {
+      color: var(--seafoam);
+      opacity: 1;
+      font-weight: 500;
+    }
+
+    .timer-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 20%;
+      right: 20%;
+      height: 1.5px;
+      background: var(--seafoam);
+      border-radius: 1px;
+      box-shadow: 0 0 8px rgba(42, 191, 191, 0.4);
+    }
+
+    .timer-tab-panel {
+      display: none;
+    }
+
+    .timer-tab-panel.active {
+      display: block;
+    }
+
     /* Timer section */
     .timer-card {
       position: relative;
@@ -552,6 +609,99 @@
     .session-dot.done {
       background: var(--seafoam);
       box-shadow: 0 0 8px rgba(42, 191, 191, 0.5);
+    }
+
+    /* Stopwatch display */
+    .sw-display-box {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+      margin: 0.5rem 0 2rem;
+      border-radius: 18px;
+      background: rgba(10, 40, 70, 0.5);
+      border: none;
+      position: relative;
+    }
+
+    .sw-border-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .sw-border-glow {
+      fill: none;
+      stroke: rgba(42, 191, 191, 0.04);
+      stroke-width: 12;
+    }
+
+    .sw-border-track {
+      fill: none;
+      stroke: rgba(42, 191, 191, 0.10);
+      stroke-width: 3;
+      stroke-dasharray: 8 4;
+    }
+
+    .sw-time-main {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 3.6rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: var(--pearl);
+      text-shadow: 0 0 30px rgba(126, 232, 232, 0.3);
+    }
+
+    .sw-time-cs {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--teal);
+      margin-left: 2px;
+      text-shadow: 0 0 20px rgba(126, 232, 232, 0.15);
+    }
+
+    /* Stopwatch laps */
+    .sw-laps {
+      max-height: 140px;
+      overflow-y: auto;
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid rgba(42, 191, 191, 0.08);
+    }
+
+    .sw-lap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.3rem 0.4rem;
+      font-size: 0.75rem;
+      color: var(--sand);
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .sw-lap:hover {
+      background: rgba(42, 191, 191, 0.05);
+    }
+
+    .sw-lap-num {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    .sw-lap-time {
+      font-family: 'Cormorant Garant', serif;
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--pearl);
+      letter-spacing: 0.05em;
     }
 
     /* Task list */
@@ -1648,55 +1798,118 @@
 
     <!-- TIMER CARD -->
     <div class="card timer-card">
-      <div class="card-title">Pomodoro</div>
-
-      <div class="phase-badge work" id="phaseBadge">
-        <span class="phase-dot"></span>
-        <span id="phaseText">Deep Work</span>
+      <div class="timer-tabs">
+        <button class="timer-tab active" onclick="switchTimerTab('pomodoro')">Pomodoro</button>
+        <button class="timer-tab" onclick="switchTimerTab('timer')">Timer</button>
+        <button class="timer-tab" onclick="switchTimerTab('stopwatch')">Stopwatch</button>
       </div>
 
-      <div class="timer-ring-wrap">
-        <svg class="timer-ring" width="260" height="260" viewBox="0 0 260 260">
-          <!-- Inner glow -->
-          <circle class="ring-inner-glow" cx="130" cy="130" r="102" />
-          <!-- Dashed wave track -->
-          <circle class="ring-track" cx="130" cy="130" r="102" />
-          <!-- Progress arc -->
-          <circle class="ring-progress" id="ringProgress" cx="130" cy="130" r="102" stroke-dasharray="641"
-            stroke-dashoffset="0" />
-        </svg>
-        <div class="timer-center">
-          <input class="timer-display" id="timerDisplay" value="25:00" maxlength="5" spellcheck="false"
-            onblur="parseDirectEdit(this.value)" onkeydown="if(event.key==='Enter'){this.blur()}"
-            onfocus="if(!isRunning)this.select()">
-          <div class="timer-label" id="timerLabel">minutes remaining</div>
+      <!-- POMODORO TAB -->
+      <div class="timer-tab-panel active" id="panelPomodoro">
+        <div class="phase-badge work" id="phaseBadge">
+          <span class="phase-dot"></span>
+          <span id="phaseText">Deep Work</span>
+        </div>
+
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring" width="260" height="260" viewBox="0 0 260 260">
+            <circle class="ring-inner-glow" cx="130" cy="130" r="102" />
+            <circle class="ring-track" cx="130" cy="130" r="102" />
+            <circle class="ring-progress" id="ringProgress" cx="130" cy="130" r="102" stroke-dasharray="641"
+              stroke-dashoffset="0" />
+          </svg>
+          <div class="timer-center">
+            <input class="timer-display" id="timerDisplay" value="25:00" maxlength="5" spellcheck="false"
+              onblur="parseDirectEdit(this.value)" onkeydown="if(event.key==='Enter'){this.blur()}"
+              onfocus="if(!isRunning)this.select()">
+            <div class="timer-label" id="timerLabel">minutes remaining</div>
+          </div>
+        </div>
+
+        <div class="timer-controls">
+          <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">Start</button>
+          <button class="btn btn-secondary" onclick="resetTimer()">Reset</button>
+        </div>
+
+        <div class="settings-row">
+          <div class="setting-group">
+            <label>Work (min)</label>
+            <input type="number" id="workMin" value="25" min="1" max="120" onchange="settingChanged()">
+          </div>
+          <div class="setting-group">
+            <label>Break (min)</label>
+            <input type="number" id="breakMin" value="5" min="1" max="60" onchange="settingChanged()">
+          </div>
+        </div>
+
+        <div class="sessions-row">
+          <span class="sessions-label">Sessions</span>
+          <div class="sessions-dots" id="sessionDots">
+            <div class="session-dot"></div>
+            <div class="session-dot"></div>
+            <div class="session-dot"></div>
+            <div class="session-dot"></div>
+          </div>
         </div>
       </div>
 
-      <div class="timer-controls">
-        <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">Start</button>
-        <button class="btn btn-secondary" onclick="resetTimer()">Reset</button>
+      <!-- TIMER TAB -->
+      <div class="timer-tab-panel" id="panelTimer">
+        <div class="phase-badge work" style="background: rgba(42, 191, 191, 0.15); border: 1px solid rgba(42, 191, 191, 0.3); color: var(--seafoam);">
+          <span class="phase-dot" style="background: var(--seafoam);"></span>
+          <span id="ctPhaseText">Countdown</span>
+        </div>
+
+        <div class="timer-ring-wrap">
+          <svg class="timer-ring" width="260" height="260" viewBox="0 0 260 260">
+            <circle class="ring-inner-glow" cx="130" cy="130" r="102" />
+            <circle class="ring-track" cx="130" cy="130" r="102" />
+            <circle class="ring-progress" id="ctRingProgress" cx="130" cy="130" r="102" stroke-dasharray="641"
+              stroke-dashoffset="0" />
+          </svg>
+          <div class="timer-center">
+            <input class="timer-display" id="ctDisplay" value="05:00" maxlength="5" spellcheck="false"
+              onblur="ctParseEdit(this.value)" onkeydown="if(event.key==='Enter'){this.blur()}"
+              onfocus="if(!ctRunning)this.select()">
+            <div class="timer-label" id="ctLabel">minutes remaining</div>
+          </div>
+        </div>
+
+        <div class="timer-controls">
+          <button class="btn btn-primary" id="ctStartBtn" onclick="ctToggle()">Start</button>
+          <button class="btn btn-secondary" onclick="ctReset()">Reset</button>
+        </div>
+
+        <div class="settings-row">
+          <div class="setting-group">
+            <label>Minutes</label>
+            <input type="number" id="ctMinInput" value="5" min="0" max="120" onchange="ctSettingChanged()">
+          </div>
+          <div class="setting-group">
+            <label>Seconds</label>
+            <input type="number" id="ctSecInput" value="0" min="0" max="59" onchange="ctSettingChanged()">
+          </div>
+        </div>
       </div>
 
-      <div class="settings-row">
-        <div class="setting-group">
-          <label>Work (min)</label>
-          <input type="number" id="workMin" value="25" min="1" max="120" onchange="settingChanged()">
+      <!-- STOPWATCH TAB -->
+      <div class="timer-tab-panel" id="panelStopwatch">
+        <div class="sw-display-box">
+          <svg class="sw-border-svg" preserveAspectRatio="none">
+            <rect class="sw-border-glow" x="6" y="6" rx="12" ry="12" width="calc(100% - 12px)" height="calc(100% - 12px)" />
+            <rect class="sw-border-track" x="1.5" y="1.5" rx="17" ry="17" width="calc(100% - 3px)" height="calc(100% - 3px)" />
+          </svg>
+          <div class="sw-time-main" id="swDisplay">00:00:00</div>
+          <div class="sw-time-cs" id="swDisplayCs">.00</div>
         </div>
-        <div class="setting-group">
-          <label>Break (min)</label>
-          <input type="number" id="breakMin" value="5" min="1" max="60" onchange="settingChanged()">
-        </div>
-      </div>
 
-      <div class="sessions-row">
-        <span class="sessions-label">Sessions</span>
-        <div class="sessions-dots" id="sessionDots">
-          <div class="session-dot"></div>
-          <div class="session-dot"></div>
-          <div class="session-dot"></div>
-          <div class="session-dot"></div>
+        <div class="timer-controls">
+          <button class="btn btn-primary" id="swStartBtn" onclick="swToggle()">Start</button>
+          <button class="btn btn-secondary" id="swLapBtn" onclick="swLap()" style="display:none;">Lap</button>
+          <button class="btn btn-secondary" onclick="swReset()">Reset</button>
         </div>
+
+        <div class="sw-laps" id="swLapsList"></div>
       </div>
     </div>
 
@@ -1833,7 +2046,7 @@
       if (document.activeElement !== el) el.value = `${m}:${s}`;
       const progress = totalSec > 0 ? (totalSec - remainSec) / totalSec : 0;
       document.getElementById('ringProgress').style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-      document.title = `${m}:${s} — Tide Focus`;
+      document.title = `Tide Focus`;
     }
 
     function parseDirectEdit(val) {
@@ -1935,6 +2148,171 @@
       dots.forEach((dot, i) => {
         dot.classList.toggle('done', i < sessionsCompleted);
       });
+    }
+
+    // ─── Tab Switching ───────────────────────────────────────────────────────────
+    function switchTimerTab(tab) {
+      document.querySelectorAll('.timer-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.timer-tab-panel').forEach(p => p.classList.remove('active'));
+      const tabMap = { pomodoro: 0, timer: 1, stopwatch: 2 };
+      document.querySelectorAll('.timer-tab')[tabMap[tab]].classList.add('active');
+      document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    }
+
+    // ─── Countdown Timer ─────────────────────────────────────────────────────────
+    let ctInterval = null;
+    let ctRunning = false;
+    let ctTotalSec = 300;
+    let ctRemainSec = 300;
+
+    function ctGetSec() {
+      const m = parseInt(document.getElementById('ctMinInput').value) || 0;
+      const s = parseInt(document.getElementById('ctSecInput').value) || 0;
+      return m * 60 + s;
+    }
+
+    function ctInit() {
+      ctTotalSec = ctGetSec();
+      ctRemainSec = ctTotalSec;
+      ctRender();
+    }
+
+    function ctSettingChanged() {
+      if (!ctRunning) ctInit();
+    }
+
+    function ctRender() {
+      const m = Math.floor(ctRemainSec / 60).toString().padStart(2, '0');
+      const s = (ctRemainSec % 60).toString().padStart(2, '0');
+      const el = document.getElementById('ctDisplay');
+      if (document.activeElement !== el) el.value = `${m}:${s}`;
+      const progress = ctTotalSec > 0 ? (ctTotalSec - ctRemainSec) / ctTotalSec : 0;
+      document.getElementById('ctRingProgress').style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+    }
+
+    function ctParseEdit(val) {
+      if (ctRunning) return;
+      let m, s;
+      const parts = val.split(':');
+      if (parts.length === 2) {
+        m = parseInt(parts[0]) || 0;
+        s = parseInt(parts[1]) || 0;
+      } else {
+        m = parseInt(parts[0]) || 0;
+        s = 0;
+      }
+      m = Math.min(m, 99); s = Math.min(s, 59);
+      ctRemainSec = m * 60 + s;
+      ctTotalSec = ctRemainSec;
+      document.getElementById('ctMinInput').value = m;
+      document.getElementById('ctSecInput').value = s;
+      ctRender();
+    }
+
+    function ctToggle() {
+      ctRunning ? ctPause() : ctStart();
+    }
+
+    function ctStart() {
+      if (ctRemainSec <= 0) return;
+      ctRunning = true;
+      document.getElementById('ctStartBtn').textContent = 'Pause';
+      ctInterval = setInterval(ctTick, 1000);
+    }
+
+    function ctPause() {
+      ctRunning = false;
+      document.getElementById('ctStartBtn').textContent = 'Resume';
+      clearInterval(ctInterval);
+    }
+
+    function ctReset() {
+      clearInterval(ctInterval);
+      ctRunning = false;
+      document.getElementById('ctStartBtn').textContent = 'Start';
+      document.getElementById('ctPhaseText').textContent = 'Countdown';
+      ctInit();
+    }
+
+    function ctTick() {
+      ctRemainSec--;
+      if (ctRemainSec < 0) {
+        clearInterval(ctInterval);
+        ctRunning = false;
+        ctRemainSec = 0;
+        ctRender();
+        document.getElementById('ctStartBtn').textContent = 'Start';
+        document.getElementById('ctPhaseText').textContent = 'Done';
+        playTone('work');
+        showToast('⏱ Timer complete');
+        showRipple();
+        return;
+      }
+      ctRender();
+    }
+
+    // ─── Stopwatch ───────────────────────────────────────────────────────────────
+    let swInterval = null;
+    let swRunning = false;
+    let swElapsed = 0; // in centiseconds
+    let swLaps = [];
+    let swLastLap = 0;
+
+    function swRender() {
+      const totalSec = Math.floor(swElapsed / 100);
+      const cs = swElapsed % 100;
+      const h = Math.floor(totalSec / 3600).toString().padStart(2, '0');
+      const m = Math.floor((totalSec % 3600) / 60).toString().padStart(2, '0');
+      const s = (totalSec % 60).toString().padStart(2, '0');
+      document.getElementById('swDisplay').textContent = `${h}:${m}:${s}`;
+      document.getElementById('swDisplayCs').textContent = `.${cs.toString().padStart(2, '0')}`;
+    }
+
+    function swToggle() {
+      swRunning ? swPause() : swStart();
+    }
+
+    function swStart() {
+      swRunning = true;
+      document.getElementById('swStartBtn').textContent = 'Pause';
+      document.getElementById('swLapBtn').style.display = '';
+      swInterval = setInterval(() => {
+        swElapsed++;
+        swRender();
+      }, 10);
+    }
+
+    function swPause() {
+      swRunning = false;
+      document.getElementById('swStartBtn').textContent = 'Resume';
+      clearInterval(swInterval);
+    }
+
+    function swReset() {
+      clearInterval(swInterval);
+      swRunning = false;
+      swElapsed = 0;
+      swLaps = [];
+      swLastLap = 0;
+      document.getElementById('swStartBtn').textContent = 'Start';
+      document.getElementById('swLapBtn').style.display = 'none';
+      document.getElementById('swLapsList').innerHTML = '';
+      swRender();
+    }
+
+    function swLap() {
+      if (!swRunning) return;
+      const lapElapsed = swElapsed - swLastLap;
+      swLastLap = swElapsed;
+      swLaps.push(lapElapsed);
+      const listEl = document.getElementById('swLapsList');
+      const totalSec = Math.floor(lapElapsed / 100);
+      const cs = lapElapsed % 100;
+      const h = Math.floor(totalSec / 3600).toString().padStart(2, '0');
+      const m = Math.floor((totalSec % 3600) / 60).toString().padStart(2, '0');
+      const s = (totalSec % 60).toString().padStart(2, '0');
+      const lapHtml = `<div class="sw-lap"><span class="sw-lap-num">Lap ${swLaps.length}</span><span class="sw-lap-time">${h}:${m}:${s}.${cs.toString().padStart(2, '0')}</span></div>`;
+      listEl.insertAdjacentHTML('afterbegin', lapHtml);
     }
 
     // ─── Tasks ────────────────────────────────────────────────────────────────────
@@ -2666,6 +3044,8 @@
 
     createParticles();
     initTimer();
+    ctInit();
+    swRender();
     renderTasks();
     initNotes();
   </script>
