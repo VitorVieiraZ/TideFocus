@@ -1121,7 +1121,7 @@
 
     /* Collapsible body */
     .music-body {
-      max-height: 400px;
+      max-height: 800px;
       opacity: 1;
       transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
         opacity 0.3s ease,
@@ -1275,6 +1275,154 @@
       background: var(--seafoam);
       cursor: pointer;
       box-shadow: 0 0 6px rgba(42, 191, 191, 0.5);
+    }
+
+    /* Custom tracks */
+    .track-divider {
+      border: none;
+      border-top: 1px solid rgba(42, 191, 191, 0.08);
+      margin: 0.5rem 0 0.3rem;
+    }
+
+    .btn-add-track {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      width: 100%;
+      padding: 0.45rem;
+      border-radius: 10px;
+      border: 1px dashed rgba(42, 191, 191, 0.15);
+      background: transparent;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+      transition: all 0.2s;
+    }
+
+    .btn-add-track:hover {
+      border-color: rgba(42, 191, 191, 0.3);
+      background: rgba(42, 191, 191, 0.05);
+      color: var(--seafoam);
+    }
+
+    .custom-track-form {
+      display: none;
+      flex-direction: column;
+      gap: 0.45rem;
+      padding: 0.6rem 0;
+    }
+
+    .custom-track-form.open {
+      display: flex;
+    }
+
+    .custom-track-form input {
+      width: 100%;
+      background: rgba(10, 40, 70, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      color: var(--pearl);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .custom-track-form input::placeholder {
+      color: rgba(26, 122, 138, 0.6);
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+    }
+
+    .custom-track-form input:focus {
+      border-color: rgba(42, 191, 191, 0.4);
+      box-shadow: 0 0 0 3px rgba(42, 191, 191, 0.08);
+    }
+
+    .custom-track-form-actions {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.1rem;
+    }
+
+    .custom-track-form-actions button {
+      flex: 1;
+      padding: 0.4rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .btn-save-track {
+      background: linear-gradient(135deg, var(--teal), var(--seafoam));
+      color: var(--deep);
+    }
+
+    .btn-save-track:hover {
+      box-shadow: 0 2px 10px rgba(42, 191, 191, 0.3);
+    }
+
+    .btn-cancel-track {
+      background: rgba(42, 191, 191, 0.08);
+      color: var(--teal);
+      border: 1px solid rgba(42, 191, 191, 0.12) !important;
+    }
+
+    .btn-cancel-track:hover {
+      background: rgba(42, 191, 191, 0.14);
+    }
+
+    .track-btn-custom {
+      position: relative;
+    }
+
+    .track-actions {
+      display: none;
+      gap: 0.25rem;
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .track-btn-custom:hover .track-actions {
+      display: flex;
+    }
+
+    .track-btn-custom .track-info {
+      transition: opacity 0.15s;
+    }
+
+    .track-btn-custom:hover .track-info {
+      opacity: 0;
+    }
+
+    .track-action {
+      background: rgba(42, 191, 191, 0.08);
+      border: 1px solid rgba(42, 191, 191, 0.12);
+      color: var(--teal);
+      font-size: 0.6rem;
+      cursor: pointer;
+      padding: 0.2rem 0.35rem;
+      border-radius: 6px;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+
+    .track-action:hover {
+      background: rgba(42, 191, 191, 0.18);
+      border-color: rgba(42, 191, 191, 0.3);
+      color: var(--seafoam);
     }
 
     @media (max-width: 700px) {
@@ -1787,6 +1935,18 @@
               </div>
             </button>
             -->
+            <div id="customTracksList"></div>
+            <hr class="track-divider">
+            <button type="button" class="btn-add-track" id="btnAddTrack" onclick="toggleAddTrackForm()">+ Add Track</button>
+            <div class="custom-track-form" id="addTrackForm" onclick="event.stopPropagation()">
+              <input type="text" id="ctfName" placeholder="Track name" maxlength="40">
+              <input type="text" id="ctfDesc" placeholder="Short description" maxlength="60">
+              <input type="text" id="ctfLink" placeholder="YouTube or Spotify link">
+              <div class="custom-track-form-actions">
+                <button type="button" class="btn-cancel-track" onclick="toggleAddTrackForm()">Cancel</button>
+                <button type="button" class="btn-save-track" onclick="saveCustomTrack()">Save</button>
+              </div>
+            </div>
           </div>
           <div class="vol-row">
             <label>Vol</label>
@@ -2520,7 +2680,7 @@
             ytReady = true;
             e.target.setVolume(getVolPct());
             // Auto-play if a track was pending
-            if (pendingTrack >= 0 && isPlaying && ytVideoIds[pendingTrack]) {
+            if (pendingTrack !== -1 && isPlaying && ytVideoIds[pendingTrack]) {
               const videoId = ytVideoIds[pendingTrack];
               ytPlayer.loadVideoById({ videoId: videoId, startSeconds: getStartSeconds(pendingTrack) });
               ytPlayer.setVolume(getVolPct());
@@ -2697,6 +2857,157 @@
       };
     }
 
+    // ─── Custom Tracks ────────────────────────────────────────────────────────────
+    let customTracks = [];
+    let spotifyIframe = null;
+
+    function loadCustomTracks() {
+      try {
+        const saved = localStorage.getItem('tideFocusCustomTracks');
+        if (saved) customTracks = JSON.parse(saved);
+        if (!Array.isArray(customTracks)) customTracks = [];
+      } catch (e) { customTracks = []; }
+      try { renderCustomTracks(); } catch (e) { console.error('renderCustomTracks:', e); }
+    }
+
+    function saveCustomTracks() {
+      localStorage.setItem('tideFocusCustomTracks', JSON.stringify(customTracks));
+    }
+
+    function toggleAddTrackForm() {
+      const form = document.getElementById('addTrackForm');
+      const btn = document.getElementById('btnAddTrack');
+      const open = form.classList.toggle('open');
+      btn.style.display = open ? 'none' : '';
+      if (open) {
+        document.getElementById('ctfName').focus();
+      } else {
+        editingTrackId = null;
+        document.getElementById('ctfName').value = '';
+        document.getElementById('ctfDesc').value = '';
+        document.getElementById('ctfLink').value = '';
+      }
+    }
+
+    function parseTrackLink(url) {
+      // YouTube: extract video ID
+      let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+      if (m) return { type: 'youtube', id: m[1] };
+      // Spotify: extract track/album/playlist URI
+      m = url.match(/open\.spotify\.com\/(track|album|playlist)\/([a-zA-Z0-9]+)/);
+      if (m) return { type: 'spotify', kind: m[1], id: m[2] };
+      return null;
+    }
+
+    let editingTrackId = null;
+
+    function saveCustomTrack() {
+      const name = document.getElementById('ctfName').value.trim();
+      const desc = document.getElementById('ctfDesc').value.trim();
+      const link = document.getElementById('ctfLink').value.trim();
+      if (!name) { showToast('Enter a track name'); return; }
+      if (!link) { showToast('Enter a YouTube or Spotify link'); return; }
+      const parsed = parseTrackLink(link);
+      if (!parsed) { showToast('Paste a valid YouTube or Spotify link'); return; }
+
+      if (editingTrackId) {
+        // Update existing track
+        const t = customTracks.find(t => t.id === editingTrackId);
+        if (t) {
+          delete ytVideoIds['c_' + t.id];
+          t.name = name;
+          t.desc = desc || (parsed.type === 'youtube' ? 'YouTube' : 'Spotify');
+          t.source = parsed;
+          t.link = link;
+          if (parsed.type === 'youtube') ytVideoIds['c_' + t.id] = parsed.id;
+        }
+        editingTrackId = null;
+      } else {
+        const track = {
+          id: Date.now(),
+          name,
+          desc: desc || (parsed.type === 'youtube' ? 'YouTube' : 'Spotify'),
+          source: parsed,
+          link
+        };
+        customTracks.push(track);
+        if (parsed.type === 'youtube') ytVideoIds['c_' + track.id] = parsed.id;
+      }
+
+      saveCustomTracks();
+      renderCustomTracks();
+      toggleAddTrackForm();
+    }
+
+    function editCustomTrack(trackId, e) {
+      e.stopPropagation();
+      const t = customTracks.find(t => t.id === trackId);
+      if (!t) return;
+      editingTrackId = trackId;
+      const form = document.getElementById('addTrackForm');
+      const btn = document.getElementById('btnAddTrack');
+      form.classList.add('open');
+      btn.style.display = 'none';
+      document.getElementById('ctfName').value = t.name;
+      document.getElementById('ctfDesc').value = t.desc;
+      document.getElementById('ctfLink').value = t.link;
+      document.getElementById('ctfName').focus();
+    }
+
+    function deleteCustomTrack(trackId, e) {
+      e.stopPropagation();
+      if (isPlaying && currentTrack === 'c_' + trackId) {
+        stopCurrentTrack(false);
+        isPlaying = false;
+        updateTrackUI(-1);
+        updateWaveBars();
+      }
+      delete ytVideoIds['c_' + trackId];
+      customTracks = customTracks.filter(t => t.id !== trackId);
+      saveCustomTracks();
+      renderCustomTracks();
+    }
+
+    function renderCustomTracks() {
+      const container = document.getElementById('customTracksList');
+      if (customTracks.length === 0) { container.innerHTML = ''; return; }
+      container.innerHTML = customTracks.map(t => {
+        const trackKey = 'c_' + t.id;
+        return `<div class="track-btn track-btn-custom" onclick="selectTrack('${trackKey}')" id="track-${trackKey}">
+          <span class="track-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 10 Q4 6 7 9 T13 7 T16 10" stroke="var(--seafoam)" stroke-width="1.5" fill="none" opacity="0.8"/><path d="M1 12 Q5 8 8 11 T14 9" stroke="var(--teal)" stroke-width="1" fill="none" opacity="0.5"/></svg></span>
+          <div class="track-info">
+            <span class="track-name">${t.name}</span>
+            <span class="track-desc">${t.desc}</span>
+          </div>
+          <div class="track-actions">
+            <button class="track-action" onclick="editCustomTrack(${t.id}, event)" title="Edit">&#9998;</button>
+            <button class="track-action" onclick="deleteCustomTrack(${t.id}, event)" title="Remove">&times;</button>
+          </div>
+        </div>`;
+      }).join('');
+      customTracks.forEach(t => {
+        if (t.source.type === 'youtube') ytVideoIds['c_' + t.id] = t.source.id;
+      });
+    }
+
+    function stopSpotify() {
+      if (spotifyIframe) { spotifyIframe.remove(); spotifyIframe = null; }
+    }
+
+    function playSpotifyTrack(trackKey) {
+      const track = customTracks.find(t => 'c_' + t.id === trackKey);
+      if (!track || track.source.type !== 'spotify') return;
+      stopSpotify();
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://open.spotify.com/embed/${track.source.kind}/${track.source.id}?autoplay=1`;
+      iframe.width = '1';
+      iframe.height = '1';
+      iframe.allow = 'autoplay; encrypted-media';
+      iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;';
+      document.body.appendChild(iframe);
+      spotifyIframe = iframe;
+    }
+
     // ─── Player Controls ──────────────────────────────────────────────────────────
     function getVolPct() { return parseInt(document.getElementById('volSlider').value); }
 
@@ -2706,6 +3017,18 @@
       masterGainNode.gain.setValueAtTime(0, ac.currentTime);
       masterGainNode.gain.linearRampToValueAtTime(getVolPct() / 100 * 0.75, ac.currentTime + 1.5);
       masterGainNode.connect(ac.destination);
+
+      // Check for Spotify custom track
+      const isCustom = typeof currentTrack === 'string' && currentTrack.startsWith('c_');
+      if (isCustom) {
+        const ct = customTracks.find(t => 'c_' + t.id === currentTrack);
+        if (ct && ct.source.type === 'spotify') {
+          playSpotifyTrack(currentTrack);
+          isPlaying = true;
+          updateWaveBars();
+          return;
+        }
+      }
 
       if (ytVideoIds[currentTrack]) {
         const videoId = ytVideoIds[currentTrack];
@@ -2728,6 +3051,7 @@
 
     function stopCurrentTrack(instant) {
       pendingTrack = -1;
+      stopSpotify();
       // Always stop YouTube to prevent audio bleed between tracks
       if (ytReady && ytPlayer) {
         ytPlayer.pauseVideo();
@@ -3047,6 +3371,7 @@
     ctInit();
     swRender();
     renderTasks();
+    try { loadCustomTracks(); } catch(e) { console.error('loadCustomTracks:', e); }
     initNotes();
   </script>
 </body>
