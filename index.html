@@ -2440,21 +2440,31 @@
       isRunning ? pauseTimer() : startTimer();
     }
 
+    let pomodoroStartedAt = null; // wall-clock ms when started
+    let pomodoroRemainAtStart = 0; // remainSec when started
+
     function startTimer() {
       isRunning = true;
+      pomodoroStartedAt = Date.now();
+      pomodoroRemainAtStart = remainSec;
       document.getElementById('startBtn').textContent = 'Pause';
-      interval = setInterval(tick, 1000);
+      interval = setInterval(tick, 250);
     }
 
     function pauseTimer() {
       isRunning = false;
+      // Sync remainSec from wall clock
+      const elapsed = Math.floor((Date.now() - pomodoroStartedAt) / 1000);
+      remainSec = Math.max(0, pomodoroRemainAtStart - elapsed);
       document.getElementById('startBtn').textContent = 'Resume';
       clearInterval(interval);
+      renderTimer();
     }
 
     function resetTimer() {
       clearInterval(interval);
       isRunning = false;
+      pomodoroStartedAt = null;
       isWork = true;
       document.getElementById('startBtn').textContent = 'Start';
       updatePhaseUI();
@@ -2462,8 +2472,10 @@
     }
 
     function tick() {
-      remainSec--;
-      if (remainSec < 0) {
+      const elapsed = Math.floor((Date.now() - pomodoroStartedAt) / 1000);
+      remainSec = Math.max(0, pomodoroRemainAtStart - elapsed);
+      if (remainSec <= 0) {
+        remainSec = 0;
         timerDone();
         return;
       }
@@ -2578,6 +2590,9 @@
       ctRender();
     }
 
+    let ctStartedAt = null;
+    let ctRemainAtStart = 0;
+
     function ctToggle() {
       ctRunning ? ctPause() : ctStart();
     }
@@ -2585,30 +2600,38 @@
     function ctStart() {
       if (ctRemainSec <= 0) return;
       ctRunning = true;
+      ctStartedAt = Date.now();
+      ctRemainAtStart = ctRemainSec;
       document.getElementById('ctStartBtn').textContent = 'Pause';
-      ctInterval = setInterval(ctTick, 1000);
+      ctInterval = setInterval(ctTick, 250);
     }
 
     function ctPause() {
       ctRunning = false;
+      const elapsed = Math.floor((Date.now() - ctStartedAt) / 1000);
+      ctRemainSec = Math.max(0, ctRemainAtStart - elapsed);
       document.getElementById('ctStartBtn').textContent = 'Resume';
       clearInterval(ctInterval);
+      ctRender();
     }
 
     function ctReset() {
       clearInterval(ctInterval);
       ctRunning = false;
+      ctStartedAt = null;
       document.getElementById('ctStartBtn').textContent = 'Start';
       document.getElementById('ctPhaseText').textContent = 'Countdown';
       ctInit();
     }
 
     function ctTick() {
-      ctRemainSec--;
-      if (ctRemainSec < 0) {
+      const elapsed = Math.floor((Date.now() - ctStartedAt) / 1000);
+      ctRemainSec = Math.max(0, ctRemainAtStart - elapsed);
+      if (ctRemainSec <= 0) {
         clearInterval(ctInterval);
         ctRunning = false;
         ctRemainSec = 0;
+        ctStartedAt = null;
         ctRender();
         document.getElementById('ctStartBtn').textContent = 'Start';
         document.getElementById('ctPhaseText').textContent = 'Done';
@@ -2641,26 +2664,35 @@
       swRunning ? swPause() : swStart();
     }
 
+    let swStartedAt = null;
+    let swElapsedAtStart = 0;
+
     function swStart() {
       swRunning = true;
+      swStartedAt = Date.now();
+      swElapsedAtStart = swElapsed;
       document.getElementById('swStartBtn').textContent = 'Pause';
       document.getElementById('swLapBtn').style.display = '';
       swInterval = setInterval(() => {
-        swElapsed++;
+        swElapsed = swElapsedAtStart + Math.floor((Date.now() - swStartedAt) / 10);
         swRender();
-      }, 10);
+      }, 16);
     }
 
     function swPause() {
       swRunning = false;
+      swElapsed = swElapsedAtStart + Math.floor((Date.now() - swStartedAt) / 10);
       document.getElementById('swStartBtn').textContent = 'Resume';
       clearInterval(swInterval);
+      swRender();
     }
 
     function swReset() {
       clearInterval(swInterval);
       swRunning = false;
       swElapsed = 0;
+      swElapsedAtStart = 0;
+      swStartedAt = null;
       swLaps = [];
       swLastLap = 0;
       document.getElementById('swStartBtn').textContent = 'Start';
