@@ -709,6 +709,88 @@
       align-self: start;
     }
 
+    /* Task tabs */
+    .tasks-tabs {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin: 0.25rem 0 0.75rem;
+      border-bottom: 1px solid rgba(42, 191, 191, 0.12);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tasks-tabs::-webkit-scrollbar { display: none; }
+
+    .task-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.7rem;
+      font-family: 'Cormorant Garant', serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: var(--pearl);
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      opacity: 0.55;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      max-width: 160px;
+    }
+    .task-tab:hover { opacity: 0.85; background: rgba(42, 191, 191, 0.05); }
+    .task-tab.active {
+      opacity: 1;
+      color: var(--seafoam);
+      background: rgba(42, 191, 191, 0.08);
+      border-color: rgba(42, 191, 191, 0.18);
+      border-bottom: 1px solid rgba(6, 24, 48, 0.5);
+      margin-bottom: -1px;
+    }
+    .task-tab .tab-name {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: inherit;
+      font: inherit;
+      letter-spacing: inherit;
+      padding: 0;
+      width: auto;
+      min-width: 1ch;
+      max-width: 120px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .task-tab .tab-close {
+      background: transparent;
+      border: none;
+      color: inherit;
+      opacity: 0.5;
+      cursor: pointer;
+      font-size: 0.95rem;
+      line-height: 1;
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+    .task-tab .tab-close:hover { opacity: 1; color: var(--coral, #ff7a7a); }
+    .task-tab-add {
+      background: transparent;
+      border: 1px dashed rgba(42, 191, 191, 0.25);
+      color: var(--seafoam);
+      cursor: pointer;
+      padding: 0.3rem 0.55rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1;
+      opacity: 0.6;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .task-tab-add:hover { opacity: 1; background: rgba(42, 191, 191, 0.08); }
+
     .tasks-list {
       list-style: none;
       display: flex;
@@ -2362,6 +2444,8 @@
     <div class="card tasks-card">
       <div class="card-title">Tasks</div>
 
+      <div class="tasks-tabs" id="tasksTabs"></div>
+
       <div class="tasks-progress">
         <div class="progress-bar-track">
           <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
@@ -2832,23 +2916,119 @@
     }
 
     // ─── Tasks ────────────────────────────────────────────────────────────────────
-    function loadTasks() {
+    const TABS_KEY = 'tideFocusTaskTabs';
+    const LEGACY_KEY = 'tideFocusTasks';
+
+    function loadTabs() {
       try {
-        const saved = localStorage.getItem('tideFocusTasks');
+        const saved = localStorage.getItem(TABS_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          if (parsed && Array.isArray(parsed.tabs) && parsed.tabs.length > 0) return parsed;
         }
-      } catch (e) { /* ignore corrupt data */ }
-      return [{ id: 1, text: '', done: false }];
+      } catch (e) { }
+      // Migrate from legacy single-list format
+      let legacyTasks = null;
+      try {
+        const legacy = localStorage.getItem(LEGACY_KEY);
+        if (legacy) {
+          const arr = JSON.parse(legacy);
+          if (Array.isArray(arr) && arr.length > 0) legacyTasks = arr;
+        }
+      } catch (e) { }
+      const firstTab = {
+        id: 1,
+        name: 'Tasks',
+        tasks: legacyTasks || [{ id: 1, text: '', done: false }]
+      };
+      return { tabs: [firstTab], activeId: 1, nextTabId: 2 };
     }
+
+    let taskTabs = loadTabs();
+    let activeTab = taskTabs.tabs.find(t => t.id === taskTabs.activeId) || taskTabs.tabs[0];
+    taskTabs.activeId = activeTab.id;
+    let tasks = activeTab.tasks;
+    let nextId = tasks.reduce((max, t) => Math.max(max, t.id), 0) + 1;
 
     function saveTasks() {
-      try { localStorage.setItem('tideFocusTasks', JSON.stringify(tasks)); } catch (e) { }
+      activeTab.tasks = tasks;
+      try { localStorage.setItem(TABS_KEY, JSON.stringify(taskTabs)); } catch (e) { }
     }
 
-    let tasks = loadTasks();
-    let nextId = tasks.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+    function renderTabs() {
+      const bar = document.getElementById('tasksTabs');
+      bar.innerHTML = '';
+      taskTabs.tabs.forEach(tab => {
+        const el = document.createElement('div');
+        el.className = 'task-tab' + (tab.id === taskTabs.activeId ? ' active' : '');
+        el.onclick = (e) => {
+          if (e.target.classList.contains('tab-close') || e.target.classList.contains('tab-name')) return;
+          switchTab(tab.id);
+        };
+        const nameInput = document.createElement('input');
+        nameInput.className = 'tab-name';
+        nameInput.value = tab.name;
+        nameInput.size = Math.max(tab.name.length, 1);
+        nameInput.readOnly = tab.id !== taskTabs.activeId;
+        nameInput.ondblclick = () => { nameInput.readOnly = false; nameInput.focus(); nameInput.select(); };
+        nameInput.oninput = () => {
+          tab.name = nameInput.value;
+          nameInput.size = Math.max(nameInput.value.length, 1);
+          saveTasks();
+        };
+        nameInput.onblur = () => { nameInput.readOnly = true; if (!tab.name.trim()) { tab.name = 'Untitled'; nameInput.value = tab.name; saveTasks(); } };
+        nameInput.onkeydown = (e) => { if (e.key === 'Enter') nameInput.blur(); };
+        el.appendChild(nameInput);
+        if (taskTabs.tabs.length > 1) {
+          const close = document.createElement('button');
+          close.className = 'tab-close';
+          close.textContent = '×';
+          close.title = 'Delete tab';
+          close.onclick = (e) => { e.stopPropagation(); deleteTab(tab.id); };
+          el.appendChild(close);
+        }
+        bar.appendChild(el);
+      });
+      const addBtn = document.createElement('button');
+      addBtn.className = 'task-tab-add';
+      addBtn.textContent = '+';
+      addBtn.title = 'New tab';
+      addBtn.onclick = newTab;
+      bar.appendChild(addBtn);
+    }
+
+    function switchTab(id) {
+      const tab = taskTabs.tabs.find(t => t.id === id);
+      if (!tab) return;
+      activeTab.tasks = tasks;
+      activeTab = tab;
+      taskTabs.activeId = id;
+      tasks = activeTab.tasks;
+      nextId = tasks.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+      renderTabs();
+      renderTasks();
+    }
+
+    function newTab() {
+      const id = taskTabs.nextTabId++;
+      const tab = { id, name: 'Tasks ' + id, tasks: [{ id: 1, text: '', done: false }] };
+      taskTabs.tabs.push(tab);
+      switchTab(id);
+    }
+
+    function deleteTab(id) {
+      if (taskTabs.tabs.length <= 1) return;
+      if (!confirm('Delete this tab and all its tasks?')) return;
+      const idx = taskTabs.tabs.findIndex(t => t.id === id);
+      taskTabs.tabs.splice(idx, 1);
+      if (taskTabs.activeId === id) {
+        const next = taskTabs.tabs[Math.max(0, idx - 1)];
+        switchTab(next.id);
+      } else {
+        saveTasks();
+        renderTabs();
+      }
+    }
 
     function renderTasks() {
       const list = document.getElementById('tasksList');
@@ -2961,7 +3141,7 @@
           savedDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
           updateFolderDisplay();
         }
-        const fileName = `tide-focus-tasks-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-')}.csv`;
+        const fileName = `tide-focus-${(activeTab.name||'tasks').replace(/[^a-z0-9]+/gi,'-').toLowerCase()}-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-')}.csv`;
         const fh = await savedDirHandle.getFileHandle(fileName, { create: true });
         const w = await fh.createWritable();
         await w.write(csv);
@@ -2980,7 +3160,7 @@
       if (csv.split('\n').length < 2) { showToast('No tasks to export'); return; }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-      a.download = `tide-focus-tasks-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-')}.csv`;
+      a.download = `tide-focus-${(activeTab.name||'tasks').replace(/[^a-z0-9]+/gi,'-').toLowerCase()}-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-')}.csv`;
       a.click();
       URL.revokeObjectURL(a.href);
       showToast('CSV downloaded');
@@ -3073,7 +3253,7 @@
     }
 
     async function uploadToDrive(folderId, csv) {
-      const fileName = `tide-focus-tasks-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-')}.csv`;
+      const fileName = `tide-focus-${(activeTab.name||'tasks').replace(/[^a-z0-9]+/gi,'-').toLowerCase()}-${new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-')}.csv`;
       const meta = { name: fileName, mimeType: 'text/csv', parents: [folderId] };
       const form = new FormData();
       form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
@@ -3908,6 +4088,7 @@
     initTimer();
     ctInit();
     swRender();
+    renderTabs();
     renderTasks();
     try { loadCustomTracks(); } catch(e) { console.error('loadCustomTracks:', e); }
     initNotes();
