@@ -8,11 +8,11 @@
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230a1628'/><path d='M3 18 Q8 12 13 16 T23 14 T31 17' stroke='%232abfbf' stroke-width='2' fill='none'/><path d='M1 22 Q7 16 14 20 T26 17 T32 21' stroke='%231a7a8a' stroke-width='1.5' fill='none' opacity='.7'/></svg>"
     type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <style>
     :root {
       --deep: #0a1628;
@@ -251,6 +251,12 @@
       color: var(--seafoam);
       opacity: 1;
       font-weight: 500;
+    }
+
+    .timer-tab:focus-visible {
+      outline: 2px solid rgba(42, 191, 191, 0.5);
+      outline-offset: -2px;
+      border-radius: 4px;
     }
 
     .timer-tab.active::after {
@@ -519,6 +525,16 @@
       box-shadow: 0 6px 28px rgba(42, 191, 191, 0.45);
     }
 
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 12px rgba(42, 191, 191, 0.25);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid rgba(42, 191, 191, 0.6);
+      outline-offset: 3px;
+    }
+
     .btn-secondary {
       background: rgba(42, 191, 191, 0.1);
       color: var(--seafoam);
@@ -532,6 +548,10 @@
     .btn-secondary:hover {
       background: rgba(42, 191, 191, 0.18);
       transform: translateY(-1px);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(0);
     }
 
     /* Settings */
@@ -572,7 +592,13 @@
 
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
-      opacity: 0.3;
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
     }
 
     /* Session count */
@@ -964,6 +990,12 @@
       transform: scale(1.1);
     }
 
+    .btn-clear-icon:focus-visible,
+    .btn-export-icon:focus-visible {
+      outline: 2px solid rgba(42, 191, 191, 0.6);
+      outline-offset: 3px;
+    }
+
     /* Export button */
     .btn-export-wrap { position: relative; }
 
@@ -1181,7 +1213,7 @@
       color: var(--foam);
       letter-spacing: 0.05em;
       z-index: 1000;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
       pointer-events: none;
       white-space: nowrap;
     }
@@ -1711,7 +1743,7 @@
     .btn-cancel-track {
       background: rgba(42, 191, 191, 0.08);
       color: var(--teal);
-      border: 1px solid rgba(42, 191, 191, 0.12) !important;
+      border: 1px solid rgba(42, 191, 191, 0.12);
     }
 
     .btn-cancel-track:hover {
@@ -1925,9 +1957,7 @@
       display: flex;
       align-items: center;
       gap: 0.3rem;
-      margin-bottom: 0.75rem;
       flex-wrap: wrap;
-      padding: 0.5rem 0.6rem;
       border-radius: 14px 14px 0 0;
       background: rgba(6, 24, 48, 0.5);
       border: 1px solid rgba(42, 191, 191, 0.1);
@@ -2142,8 +2172,9 @@
     }
 
     .notes-editor blockquote {
-      border-left: 3px solid rgba(42, 191, 191, 0.3);
-      padding-left: 1rem;
+      background: rgba(42, 191, 191, 0.06);
+      border-radius: 10px;
+      padding: 0.65rem 1rem;
       margin: 0.5em 0;
       color: rgba(232, 246, 245, 0.7);
       font-style: italic;
@@ -2215,6 +2246,10 @@
         padding: 0.3rem 0.4rem;
         font-size: 0.75rem;
       }
+    }
+
+    .sw-lap-hidden {
+      display: none;
     }
 
     #yt-player {
@@ -2432,7 +2467,7 @@
 
         <div class="timer-controls">
           <button class="btn btn-primary" id="swStartBtn" onclick="swToggle()">Start</button>
-          <button class="btn btn-secondary" id="swLapBtn" onclick="swLap()" style="display:none;">Lap</button>
+          <button class="btn btn-secondary sw-lap-hidden" id="swLapBtn" onclick="swLap()">Lap</button>
           <button class="btn btn-secondary" onclick="swReset()">Reset</button>
         </div>
 
@@ -2456,7 +2491,7 @@
       <ul class="tasks-list" id="tasksList"></ul>
       <div class="tasks-footer">
         <button class="btn-add-task" onclick="addTask()">+ Add task</button>
-        <button class="btn-clear-icon" onclick="clearAllTasks()" title="Clear all tasks">
+        <button class="btn-clear-icon" onclick="clearAllTasks()" title="Clear all tasks" aria-label="Clear all tasks">
           <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
             <path d="M3 14 Q6 8 10 12 T17 10" stroke="currentColor" stroke-width="1.5" opacity="0.7" />
             <path d="M2 17 Q7 11 12 15 T19 12" stroke="currentColor" stroke-width="1" opacity="0.4" />
@@ -2467,14 +2502,14 @@
           </svg>
         </button>
         <div class="btn-export-wrap">
-          <button class="btn-export-icon" onclick="exportToFolder()" title="Save tasks to folder">
+          <button class="btn-export-icon" onclick="exportToFolder()" title="Save tasks to folder" aria-label="Save tasks to folder">
             <svg viewBox="0 0 20 20" width="15" height="15" fill="none">
               <path d="M3 6V16h14V8H10L8 6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="currentColor" opacity="0.08"/>
               <path d="M10 10v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
               <path d="M8 12l2-2 2 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
-          <button class="btn-export-settings" onclick="toggleExportPopover(event)" title="Export settings">
+          <button class="btn-export-settings" onclick="toggleExportPopover(event)" title="Export settings" aria-label="Export settings">
             <svg viewBox="0 0 12 12" width="9" height="9" fill="none">
               <circle cx="6" cy="2" r="1" fill="currentColor"/><circle cx="6" cy="6" r="1" fill="currentColor"/><circle cx="6" cy="10" r="1" fill="currentColor"/>
             </svg>
@@ -2513,7 +2548,7 @@
   <div class="notes-section">
     <div class="notes-card" style="position:relative">
       <div class="card-title">Free Notes</div>
-      <button class="btn-clear-all btn-clear-icon" onclick="clearAllNotes()" title="Clear notes"
+      <button class="btn-clear-all btn-clear-icon" onclick="clearAllNotes()" title="Clear notes" aria-label="Clear notes"
         style="position:absolute;top:1.25rem;right:1.25rem">
         <svg viewBox="0 0 20 20" width="18" height="18" fill="none">
           <path d="M3 14 Q6 8 10 12 T17 10" stroke="currentColor" stroke-width="1.5" opacity="0.7" />
@@ -2871,7 +2906,7 @@
       swStartedAt = Date.now();
       swElapsedAtStart = swElapsed;
       document.getElementById('swStartBtn').textContent = 'Pause';
-      document.getElementById('swLapBtn').style.display = '';
+      document.getElementById('swLapBtn').classList.remove('sw-lap-hidden');
       swInterval = setInterval(() => {
         swElapsed = swElapsedAtStart + Math.floor((Date.now() - swStartedAt) / 10);
         swRender();
@@ -2895,7 +2930,7 @@
       swLaps = [];
       swLastLap = 0;
       document.getElementById('swStartBtn').textContent = 'Start';
-      document.getElementById('swLapBtn').style.display = 'none';
+      document.getElementById('swLapBtn').classList.add('sw-lap-hidden');
       document.getElementById('swLapsList').innerHTML = '';
       swRender();
     }
@@ -3227,7 +3262,6 @@
         });
         tokenClient.requestAccessToken();
       } catch (e) {
-        console.error(e);
         showToast('Failed to connect to Google');
       }
     }
@@ -3585,7 +3619,7 @@
         if (saved) customTracks = JSON.parse(saved);
         if (!Array.isArray(customTracks)) customTracks = [];
       } catch (e) { customTracks = []; }
-      try { renderCustomTracks(); } catch (e) { console.error('renderCustomTracks:', e); }
+      try { renderCustomTracks(); } catch (e) { }
     }
 
     function saveCustomTracks() {
@@ -4090,7 +4124,7 @@
     swRender();
     renderTabs();
     renderTasks();
-    try { loadCustomTracks(); } catch(e) { console.error('loadCustomTracks:', e); }
+    try { loadCustomTracks(); } catch(e) { }
     initNotes();
   </script>
 </body>
