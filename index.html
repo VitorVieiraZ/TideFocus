@@ -11,11 +11,34 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garant:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
+  <meta name="description"
+    content="Tide Focus — a free Pomodoro timer with ambient soundscapes, tasks, and notes. Flow with the tide and get deep work done.">
+  <meta property="og:title" content="Tide Focus">
+  <meta property="og:description" content="A free Pomodoro timer with ambient soundscapes, tasks, and notes.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://vitorvieiraz.github.io/TideFocus/">
+  <meta property="og:image" content="https://vitorvieiraz.github.io/TideFocus/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" id="themeColorMeta" content="#1a0b14">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong palette
+    try {
+      var s0 = JSON.parse(localStorage.getItem('tideFocusSettings') || '{}');
+      if (s0.theme === 'ocean') document.documentElement.setAttribute('data-theme', 'ocean');
+    } catch (e) { }
+  </script>
   <style>
     /* Summer sunset palette — variable names kept from the original ocean theme */
     :root {
+      --accent-rgb: 255, 157, 92;
+      --foam-rgb: 255, 210, 157;
+      --glass-rgb: 58, 22, 40;
+      --break-accent: #ffd166;
+      --break-accent-rgb: 255, 209, 102;
       --deep: #2b1216;
       --abyss: #1a0b14;
       --midnight: #33122a;
@@ -25,10 +48,10 @@
       --foam: #ffd29d;
       --sand: #f5d9b8;
       --pearl: #fff6ec;
-      --glow: rgba(255, 157, 92, 0.15);
-      --glow-strong: rgba(255, 157, 92, 0.35);
-      --glass: rgba(58, 22, 40, 0.55);
-      --glass-border: rgba(255, 157, 92, 0.18);
+      --glow: rgba(var(--accent-rgb), 0.15);
+      --glow-strong: rgba(var(--accent-rgb), 0.35);
+      --glass: rgba(var(--glass-rgb), 0.55);
+      --glass-border: rgba(var(--accent-rgb), 0.18);
     }
 
     * {
@@ -212,12 +235,12 @@
     }
 
     .logo {
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 2.8rem;
       font-weight: 300;
       letter-spacing: 0.12em;
       color: var(--foam);
-      text-shadow: 0 0 40px rgba(255, 210, 157, 0.4);
+      text-shadow: 0 0 40px rgba(var(--foam-rgb), 0.4);
     }
 
     .logo span {
@@ -236,15 +259,15 @@
 
     /* Glass card */
     .card {
-      background: rgba(58, 22, 40, 0.78);
+      background: rgba(var(--glass-rgb), 0.78);
       border: 1px solid var(--glass-border);
       border-radius: 24px;
       padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 210, 157, 0.08);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(var(--foam-rgb), 0.08);
     }
 
     .card-title {
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.1rem;
       font-weight: 300;
       letter-spacing: 0.2em;
@@ -270,7 +293,7 @@
       display: flex;
       gap: 0;
       margin-bottom: 1.8rem;
-      border-bottom: 1px solid rgba(255, 157, 92, 0.1);
+      border-bottom: 1px solid rgba(var(--accent-rgb), 0.1);
       position: relative;
     }
 
@@ -303,7 +326,7 @@
     }
 
     .timer-tab:focus-visible {
-      outline: 2px solid rgba(255, 157, 92, 0.5);
+      outline: 2px solid rgba(var(--accent-rgb), 0.5);
       outline-offset: -2px;
       border-radius: 4px;
     }
@@ -317,7 +340,7 @@
       height: 1.5px;
       background: var(--seafoam);
       border-radius: 1px;
-      box-shadow: 0 0 8px rgba(255, 157, 92, 0.4);
+      box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.4);
     }
 
     .timer-tab-panel {
@@ -342,7 +365,7 @@
       width: 200px;
       height: 200px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(255, 157, 92, 0.08) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(var(--accent-rgb), 0.08) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -362,15 +385,15 @@
     }
 
     .phase-badge.work {
-      background: rgba(255, 157, 92, 0.15);
-      border: 1px solid rgba(255, 157, 92, 0.3);
+      background: rgba(var(--accent-rgb), 0.15);
+      border: 1px solid rgba(var(--accent-rgb), 0.3);
       color: var(--seafoam);
     }
 
     .phase-badge.break {
-      background: rgba(255, 209, 102, 0.12);
-      border: 1px solid rgba(255, 209, 102, 0.3);
-      color: #ffd166;
+      background: rgba(var(--break-accent-rgb), 0.12);
+      border: 1px solid rgba(var(--break-accent-rgb), 0.3);
+      color: var(--break-accent);
     }
 
     .phase-dot {
@@ -385,7 +408,7 @@
     }
 
     .break .phase-dot {
-      background: #ffd166;
+      background: var(--break-accent);
     }
 
     @keyframes pulse-dot {
@@ -418,8 +441,8 @@
       height: 260px;
       border-radius: 50%;
       background: radial-gradient(circle,
-          rgba(255, 157, 92, 0.06) 0%,
-          rgba(255, 157, 92, 0.02) 50%,
+          rgba(var(--accent-rgb), 0.06) 0%,
+          rgba(var(--accent-rgb), 0.02) 50%,
           transparent 70%);
     }
 
@@ -445,7 +468,7 @@
     /* Outer decorative ripple rings */
     .ring-ripple {
       fill: none;
-      stroke: rgba(255, 157, 92, 0.06);
+      stroke: rgba(var(--accent-rgb), 0.06);
       stroke-width: 1;
     }
 
@@ -480,7 +503,7 @@
     /* Main track — wavy dashed circle */
     .ring-track {
       fill: none;
-      stroke: rgba(255, 157, 92, 0.10);
+      stroke: rgba(var(--accent-rgb), 0.10);
       stroke-width: 3;
       stroke-dasharray: 8 4;
     }
@@ -488,7 +511,7 @@
     /* Inner glow ring */
     .ring-inner-glow {
       fill: none;
-      stroke: rgba(255, 157, 92, 0.04);
+      stroke: rgba(var(--accent-rgb), 0.04);
       stroke-width: 12;
     }
 
@@ -503,7 +526,7 @@
     }
 
     .ring-progress.break-ring {
-      stroke: #ffd166;
+      stroke: var(--break-accent);
     }
 
     .timer-center {
@@ -512,13 +535,13 @@
     }
 
     .timer-display {
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 4rem;
       font-weight: 300;
       letter-spacing: 0.05em;
       line-height: 1;
       color: var(--pearl);
-      text-shadow: 0 0 30px rgba(255, 210, 157, 0.3);
+      text-shadow: 0 0 30px rgba(var(--foam-rgb), 0.3);
       background: transparent;
       border: none;
       outline: none;
@@ -529,8 +552,8 @@
     }
 
     .timer-display:focus {
-      text-shadow: 0 0 30px rgba(255, 210, 157, 0.6);
-      border-bottom: 1px solid rgba(255, 157, 92, 0.35);
+      text-shadow: 0 0 30px rgba(var(--foam-rgb), 0.6);
+      border-bottom: 1px solid rgba(var(--accent-rgb), 0.35);
     }
 
     .timer-label {
@@ -566,26 +589,26 @@
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 0.15em;
-      box-shadow: 0 4px 20px rgba(255, 157, 92, 0.3);
+      box-shadow: 0 4px 20px rgba(var(--accent-rgb), 0.3);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 28px rgba(255, 157, 92, 0.45);
+      box-shadow: 0 6px 28px rgba(var(--accent-rgb), 0.45);
     }
 
     .btn-primary:active {
       transform: translateY(0);
-      box-shadow: 0 2px 12px rgba(255, 157, 92, 0.25);
+      box-shadow: 0 2px 12px rgba(var(--accent-rgb), 0.25);
     }
 
     .btn:focus-visible {
-      outline: 2px solid rgba(255, 157, 92, 0.6);
+      outline: 2px solid rgba(var(--accent-rgb), 0.6);
       outline-offset: 3px;
     }
 
     .btn-secondary {
-      background: rgba(255, 157, 92, 0.1);
+      background: rgba(var(--accent-rgb), 0.1);
       color: var(--seafoam);
       border: 1px solid var(--glass-border);
       padding: 0.75rem 1.5rem;
@@ -595,7 +618,7 @@
     }
 
     .btn-secondary:hover {
-      background: rgba(255, 157, 92, 0.18);
+      background: rgba(var(--accent-rgb), 0.18);
       transform: translateY(-1px);
     }
 
@@ -621,12 +644,12 @@
 
     .setting-group input[type="number"] {
       width: 100%;
-      background: rgba(58, 22, 40, 0.6);
+      background: rgba(var(--glass-rgb), 0.6);
       border: 1px solid var(--glass-border);
       border-radius: 10px;
       padding: 0.55rem 0.85rem;
       color: var(--pearl);
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.3rem;
       font-weight: 300;
       text-align: center;
@@ -635,8 +658,8 @@
     }
 
     .setting-group input[type="number"]:focus {
-      border-color: rgba(255, 157, 92, 0.4);
-      box-shadow: 0 0 0 3px rgba(255, 157, 92, 0.08);
+      border-color: rgba(var(--accent-rgb), 0.4);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
     }
 
     input[type="number"]::-webkit-inner-spin-button,
@@ -657,7 +680,7 @@
       justify-content: space-between;
       margin-top: 1rem;
       padding-top: 1rem;
-      border-top: 1px solid rgba(255, 157, 92, 0.08);
+      border-top: 1px solid rgba(var(--accent-rgb), 0.08);
     }
 
     .sessions-label {
@@ -676,14 +699,101 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: rgba(255, 157, 92, 0.15);
-      border: 1px solid rgba(255, 157, 92, 0.25);
+      background: rgba(var(--accent-rgb), 0.15);
+      border: 1px solid rgba(var(--accent-rgb), 0.25);
       transition: all 0.3s;
     }
 
     .session-dot.done {
       background: var(--seafoam);
-      box-shadow: 0 0 8px rgba(255, 157, 92, 0.5);
+      box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.5);
+    }
+
+    /* Focus stats */
+    .stats-block {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(var(--accent-rgb), 0.08);
+    }
+
+    .stats-summary {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .stats-summary .stats-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-right: auto;
+    }
+
+    .stats-text {
+      font-size: 0.78rem;
+      color: var(--sand);
+    }
+
+    .stats-chevron {
+      color: var(--teal);
+      font-size: 0.7rem;
+      margin-left: 0.5rem;
+      transition: transform 0.3s;
+    }
+
+    .stats-block.collapsed .stats-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .stats-chart {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      margin-top: 0.9rem;
+    }
+
+    .stats-block.collapsed .stats-chart {
+      display: none;
+    }
+
+    .stats-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stats-bar-track {
+      width: 100%;
+      height: 52px;
+      display: flex;
+      align-items: flex-end;
+      background: rgba(var(--accent-rgb), 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stats-bar {
+      width: 100%;
+      min-height: 2px;
+      background: var(--seafoam);
+      opacity: 0.85;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.4s ease;
+    }
+
+    .stats-day {
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--teal);
     }
 
     /* Stopwatch display */
@@ -694,7 +804,7 @@
       padding: 2.5rem 1.5rem;
       margin: 0.5rem 0 2rem;
       border-radius: 18px;
-      background: rgba(58, 22, 40, 0.5);
+      background: rgba(var(--glass-rgb), 0.5);
       border: none;
       position: relative;
     }
@@ -709,34 +819,34 @@
 
     .sw-border-glow {
       fill: none;
-      stroke: rgba(255, 157, 92, 0.04);
+      stroke: rgba(var(--accent-rgb), 0.04);
       stroke-width: 12;
     }
 
     .sw-border-track {
       fill: none;
-      stroke: rgba(255, 157, 92, 0.10);
+      stroke: rgba(var(--accent-rgb), 0.10);
       stroke-width: 3;
       stroke-dasharray: 8 4;
     }
 
     .sw-time-main {
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 3.6rem;
       font-weight: 300;
       letter-spacing: 0.06em;
       line-height: 1;
       color: var(--pearl);
-      text-shadow: 0 0 30px rgba(255, 210, 157, 0.3);
+      text-shadow: 0 0 30px rgba(var(--foam-rgb), 0.3);
     }
 
     .sw-time-cs {
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1.6rem;
       font-weight: 300;
       color: var(--teal);
       margin-left: 2px;
-      text-shadow: 0 0 20px rgba(255, 210, 157, 0.15);
+      text-shadow: 0 0 20px rgba(var(--foam-rgb), 0.15);
     }
 
     /* Stopwatch laps */
@@ -745,7 +855,7 @@
       overflow-y: auto;
       margin-top: 1rem;
       padding-top: 0.8rem;
-      border-top: 1px solid rgba(255, 157, 92, 0.08);
+      border-top: 1px solid rgba(var(--accent-rgb), 0.08);
     }
 
     .sw-lap {
@@ -760,7 +870,7 @@
     }
 
     .sw-lap:hover {
-      background: rgba(255, 157, 92, 0.05);
+      background: rgba(var(--accent-rgb), 0.05);
     }
 
     .sw-lap-num {
@@ -772,7 +882,7 @@
     }
 
     .sw-lap-time {
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 1rem;
       font-weight: 300;
       color: var(--pearl);
@@ -790,7 +900,7 @@
       align-items: center;
       gap: 0.25rem;
       margin: 0.25rem 0 0.75rem;
-      border-bottom: 1px solid rgba(255, 157, 92, 0.12);
+      border-bottom: 1px solid rgba(var(--accent-rgb), 0.12);
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -801,7 +911,7 @@
       align-items: center;
       gap: 0.4rem;
       padding: 0.4rem 0.7rem;
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-size: 0.9rem;
       font-weight: 300;
       letter-spacing: 0.04em;
@@ -816,12 +926,12 @@
       white-space: nowrap;
       max-width: 160px;
     }
-    .task-tab:hover { opacity: 0.85; background: rgba(255, 157, 92, 0.05); }
+    .task-tab:hover { opacity: 0.85; background: rgba(var(--accent-rgb), 0.05); }
     .task-tab.active {
       opacity: 1;
       color: var(--seafoam);
-      background: rgba(255, 157, 92, 0.08);
-      border-color: rgba(255, 157, 92, 0.18);
+      background: rgba(var(--accent-rgb), 0.08);
+      border-color: rgba(var(--accent-rgb), 0.18);
       border-bottom: 1px solid rgba(42, 15, 30, 0.5);
       margin-bottom: -1px;
     }
@@ -853,7 +963,7 @@
     .task-tab .tab-close:hover { opacity: 1; color: var(--coral, #ff7a7a); }
     .task-tab-add {
       background: transparent;
-      border: 1px dashed rgba(255, 157, 92, 0.25);
+      border: 1px dashed rgba(var(--accent-rgb), 0.25);
       color: var(--seafoam);
       cursor: pointer;
       padding: 0.3rem 0.55rem;
@@ -864,7 +974,7 @@
       transition: all 0.2s ease;
       flex-shrink: 0;
     }
-    .task-tab-add:hover { opacity: 1; background: rgba(255, 157, 92, 0.08); }
+    .task-tab-add:hover { opacity: 1; background: rgba(var(--accent-rgb), 0.08); }
 
     .tasks-list {
       list-style: none;
@@ -879,7 +989,7 @@
       gap: 0.75rem;
       padding: 0.75rem 1rem;
       background: rgba(42, 15, 30, 0.5);
-      border: 1px solid rgba(255, 157, 92, 0.08);
+      border: 1px solid rgba(var(--accent-rgb), 0.08);
       border-radius: 12px;
       transition: all 0.25s ease;
       animation: task-slide-in 0.3s ease;
@@ -898,7 +1008,7 @@
     }
 
     .task-item:hover {
-      border-color: rgba(255, 157, 92, 0.2);
+      border-color: rgba(var(--accent-rgb), 0.2);
       background: rgba(74, 28, 44, 0.5);
     }
 
@@ -913,7 +1023,7 @@
       width: 20px;
       height: 20px;
       border-radius: 6px;
-      border: 1.5px solid rgba(255, 157, 92, 0.35);
+      border: 1.5px solid rgba(var(--accent-rgb), 0.35);
       background: transparent;
       cursor: pointer;
       flex-shrink: 0;
@@ -940,7 +1050,7 @@
 
     .task-check:hover:not(:checked) {
       border-color: var(--seafoam);
-      background: rgba(255, 157, 92, 0.08);
+      background: rgba(var(--accent-rgb), 0.08);
     }
 
     .task-input {
@@ -960,14 +1070,14 @@
 
     .task-item.completed .task-input {
       text-decoration: line-through;
-      text-decoration-color: rgba(255, 157, 92, 0.4);
+      text-decoration-color: rgba(var(--accent-rgb), 0.4);
     }
 
     .btn-remove {
       background: none;
       border: none;
       cursor: pointer;
-      color: rgba(255, 157, 92, 0.2);
+      color: rgba(var(--accent-rgb), 0.2);
       font-size: 1.1rem;
       line-height: 1;
       padding: 2px 4px;
@@ -986,10 +1096,10 @@
       width: 100%;
       margin-top: 0.6rem;
       padding: 0.65rem;
-      background: rgba(255, 157, 92, 0.05);
-      border: 1px dashed rgba(255, 157, 92, 0.2);
+      background: rgba(var(--accent-rgb), 0.05);
+      border: 1px dashed rgba(var(--accent-rgb), 0.2);
       border-radius: 12px;
-      color: rgba(255, 157, 92, 0.5);
+      color: rgba(var(--accent-rgb), 0.5);
       font-size: 0.8rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
@@ -999,8 +1109,8 @@
     }
 
     .btn-add-task:hover {
-      background: rgba(255, 157, 92, 0.1);
-      border-color: rgba(255, 157, 92, 0.4);
+      background: rgba(var(--accent-rgb), 0.1);
+      border-color: rgba(var(--accent-rgb), 0.4);
       color: var(--seafoam);
     }
 
@@ -1020,8 +1130,8 @@
       width: 32px;
       height: 32px;
       padding: 0;
-      background: rgba(255, 157, 92, 0.06);
-      border: 1px solid rgba(255, 157, 92, 0.15);
+      background: rgba(var(--accent-rgb), 0.06);
+      border: 1px solid rgba(var(--accent-rgb), 0.15);
       border-radius: 50%;
       color: var(--teal);
       cursor: pointer;
@@ -1041,7 +1151,7 @@
 
     .btn-clear-icon:focus-visible,
     .btn-export-icon:focus-visible {
-      outline: 2px solid rgba(255, 157, 92, 0.6);
+      outline: 2px solid rgba(var(--accent-rgb), 0.6);
       outline-offset: 3px;
     }
 
@@ -1052,8 +1162,8 @@
       width: 32px;
       height: 32px;
       padding: 0;
-      background: rgba(255, 157, 92, 0.06);
-      border: 1px solid rgba(255, 157, 92, 0.15);
+      background: rgba(var(--accent-rgb), 0.06);
+      border: 1px solid rgba(var(--accent-rgb), 0.15);
       border-radius: 50%;
       color: var(--teal);
       cursor: pointer;
@@ -1065,8 +1175,8 @@
     }
 
     .btn-export-icon:hover {
-      background: rgba(255, 157, 92, 0.15);
-      border-color: rgba(255, 157, 92, 0.4);
+      background: rgba(var(--accent-rgb), 0.15);
+      border-color: rgba(var(--accent-rgb), 0.4);
       color: var(--seafoam);
       transform: scale(1.1);
     }
@@ -1078,8 +1188,8 @@
       width: 14px;
       height: 14px;
       padding: 0;
-      background: rgba(58, 22, 40, 0.9);
-      border: 1px solid rgba(255, 157, 92, 0.2);
+      background: rgba(var(--glass-rgb), 0.9);
+      border: 1px solid rgba(var(--accent-rgb), 0.2);
       border-radius: 50%;
       color: var(--teal);
       cursor: pointer;
@@ -1093,8 +1203,8 @@
     .btn-export-wrap:hover .btn-export-settings { opacity: 1; }
 
     .btn-export-settings:hover {
-      background: rgba(255, 157, 92, 0.15);
-      border-color: rgba(255, 157, 92, 0.4);
+      background: rgba(var(--accent-rgb), 0.15);
+      border-color: rgba(var(--accent-rgb), 0.4);
       color: var(--seafoam);
     }
 
@@ -1119,7 +1229,7 @@
 
     .export-divider {
       border: none;
-      border-top: 1px solid rgba(255, 157, 92, 0.08);
+      border-top: 1px solid rgba(var(--accent-rgb), 0.08);
       margin: 0.2rem 0.4rem;
     }
 
@@ -1127,7 +1237,7 @@
       position: absolute;
       bottom: calc(100% + 8px);
       right: 0;
-      background: rgba(58, 22, 40, 0.95);
+      background: rgba(var(--glass-rgb), 0.95);
       border: 1px solid var(--glass-border);
       border-radius: 12px;
       padding: 0.4rem;
@@ -1159,7 +1269,7 @@
     }
 
     .export-pop-btn:hover {
-      background: rgba(255, 157, 92, 0.1);
+      background: rgba(var(--accent-rgb), 0.1);
       color: var(--seafoam);
     }
 
@@ -1180,7 +1290,7 @@
       margin-top: 0.35rem;
       padding: 0.35rem 0.55rem;
       background: rgba(42, 15, 30, 0.6);
-      border: 1px solid rgba(255, 157, 92, 0.2);
+      border: 1px solid rgba(var(--accent-rgb), 0.2);
       border-radius: 8px;
       color: var(--pearl);
       font-family: 'DM Sans', sans-serif;
@@ -1191,7 +1301,7 @@
 
     .gdrive-setup input:focus {
       border-color: var(--seafoam);
-      box-shadow: 0 0 0 3px rgba(255, 157, 92, 0.08);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
     }
 
     .gdrive-setup .gdrive-save-btn {
@@ -1212,7 +1322,7 @@
     }
 
     .gdrive-setup .gdrive-save-btn:hover {
-      box-shadow: 0 2px 10px rgba(255, 157, 92, 0.3);
+      box-shadow: 0 2px 10px rgba(var(--accent-rgb), 0.3);
     }
 
     /* Progress bar on tasks */
@@ -1226,7 +1336,7 @@
     .progress-bar-track {
       flex: 1;
       height: 3px;
-      background: rgba(255, 157, 92, 0.1);
+      background: rgba(var(--accent-rgb), 0.1);
       border-radius: 100px;
       overflow: hidden;
     }
@@ -1236,7 +1346,7 @@
       background: linear-gradient(90deg, var(--teal), var(--seafoam));
       border-radius: 100px;
       transition: width 0.4s ease;
-      box-shadow: 0 0 8px rgba(255, 157, 92, 0.4);
+      box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.4);
     }
 
     .progress-text {
@@ -1254,7 +1364,7 @@
       bottom: 2rem;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: rgba(58, 22, 40, 0.9);
+      background: rgba(var(--glass-rgb), 0.9);
       border: 1px solid var(--glass-border);
       border-radius: 100px;
       padding: 0.8rem 2rem;
@@ -1419,6 +1529,12 @@
         animation: none !important;
       }
 
+      .stats-bar,
+      .stats-chevron,
+      .theme-toggle {
+        transition: none !important;
+      }
+
       .timer-ring-wrap::before {
         animation: none !important;
       }
@@ -1430,7 +1546,7 @@
       top: 1.5rem;
       right: 1.5rem;
       z-index: 100;
-      background: rgba(58, 22, 40, 0.85);
+      background: rgba(var(--glass-rgb), 0.85);
       border: 1px solid var(--glass-border);
       border-radius: 20px;
       padding: 0.85rem 1rem;
@@ -1553,9 +1669,9 @@
     }
 
     .track-btn.playing {
-      background: rgba(255, 157, 92, 0.18);
+      background: rgba(var(--accent-rgb), 0.18);
       border-color: var(--seafoam);
-      box-shadow: 0 0 12px rgba(255, 157, 92, 0.15);
+      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.15);
     }
 
     .track-btn.playing .track-icon {
@@ -1583,13 +1699,13 @@
     }
 
     .track-btn:hover {
-      background: rgba(255, 157, 92, 0.08);
-      border-color: rgba(255, 157, 92, 0.15);
+      background: rgba(var(--accent-rgb), 0.08);
+      border-color: rgba(var(--accent-rgb), 0.15);
     }
 
     .track-btn.active {
-      background: rgba(255, 157, 92, 0.12);
-      border-color: rgba(255, 157, 92, 0.3);
+      background: rgba(var(--accent-rgb), 0.12);
+      border-color: rgba(var(--accent-rgb), 0.3);
     }
 
     .track-icon {
@@ -1642,7 +1758,7 @@
       appearance: none;
       width: 60px;
       height: 2px;
-      background: rgba(255, 157, 92, 0.2);
+      background: rgba(var(--accent-rgb), 0.2);
       border-radius: 100px;
       outline: none;
       cursor: pointer;
@@ -1663,7 +1779,7 @@
       gap: 0.5rem;
       margin-top: 0.7rem;
       padding-top: 0.65rem;
-      border-top: 1px solid rgba(255, 157, 92, 0.08);
+      border-top: 1px solid rgba(var(--accent-rgb), 0.08);
     }
 
     .vol-row label {
@@ -1678,7 +1794,7 @@
       appearance: none;
       flex: 1;
       height: 3px;
-      background: rgba(255, 157, 92, 0.2);
+      background: rgba(var(--accent-rgb), 0.2);
       border-radius: 100px;
       outline: none;
       cursor: pointer;
@@ -1691,13 +1807,13 @@
       border-radius: 50%;
       background: var(--seafoam);
       cursor: pointer;
-      box-shadow: 0 0 6px rgba(255, 157, 92, 0.5);
+      box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.5);
     }
 
     /* Custom tracks */
     .track-divider {
       border: none;
-      border-top: 1px solid rgba(255, 157, 92, 0.08);
+      border-top: 1px solid rgba(var(--accent-rgb), 0.08);
       margin: 0.5rem 0 0.3rem;
     }
 
@@ -1709,7 +1825,7 @@
       width: 100%;
       padding: 0.45rem;
       border-radius: 10px;
-      border: 1px dashed rgba(255, 157, 92, 0.15);
+      border: 1px dashed rgba(var(--accent-rgb), 0.15);
       background: transparent;
       cursor: pointer;
       font-family: 'DM Sans', sans-serif;
@@ -1721,8 +1837,8 @@
     }
 
     .btn-add-track:hover {
-      border-color: rgba(255, 157, 92, 0.3);
-      background: rgba(255, 157, 92, 0.05);
+      border-color: rgba(var(--accent-rgb), 0.3);
+      background: rgba(var(--accent-rgb), 0.05);
       color: var(--seafoam);
     }
 
@@ -1739,7 +1855,7 @@
 
     .custom-track-form input {
       width: 100%;
-      background: rgba(58, 22, 40, 0.6);
+      background: rgba(var(--glass-rgb), 0.6);
       border: 1px solid var(--glass-border);
       border-radius: 8px;
       padding: 0.45rem 0.65rem;
@@ -1757,8 +1873,8 @@
     }
 
     .custom-track-form input:focus {
-      border-color: rgba(255, 157, 92, 0.4);
-      box-shadow: 0 0 0 3px rgba(255, 157, 92, 0.08);
+      border-color: rgba(var(--accent-rgb), 0.4);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.08);
     }
 
     .custom-track-form-actions {
@@ -1786,17 +1902,17 @@
     }
 
     .btn-save-track:hover {
-      box-shadow: 0 2px 10px rgba(255, 157, 92, 0.3);
+      box-shadow: 0 2px 10px rgba(var(--accent-rgb), 0.3);
     }
 
     .btn-cancel-track {
-      background: rgba(255, 157, 92, 0.08);
+      background: rgba(var(--accent-rgb), 0.08);
       color: var(--teal);
-      border: 1px solid rgba(255, 157, 92, 0.12);
+      border: 1px solid rgba(var(--accent-rgb), 0.12);
     }
 
     .btn-cancel-track:hover {
-      background: rgba(255, 157, 92, 0.14);
+      background: rgba(var(--accent-rgb), 0.14);
     }
 
     .track-btn-custom {
@@ -1825,8 +1941,8 @@
     }
 
     .track-action {
-      background: rgba(255, 157, 92, 0.08);
-      border: 1px solid rgba(255, 157, 92, 0.12);
+      background: rgba(var(--accent-rgb), 0.08);
+      border: 1px solid rgba(var(--accent-rgb), 0.12);
       color: var(--teal);
       font-size: 0.6rem;
       cursor: pointer;
@@ -1837,8 +1953,8 @@
     }
 
     .track-action:hover {
-      background: rgba(255, 157, 92, 0.18);
-      border-color: rgba(255, 157, 92, 0.3);
+      background: rgba(var(--accent-rgb), 0.18);
+      border-color: rgba(var(--accent-rgb), 0.3);
       color: var(--seafoam);
     }
 
@@ -1874,11 +1990,11 @@
     }
 
     .notes-card {
-      background: rgba(58, 22, 40, 0.78);
+      background: rgba(var(--glass-rgb), 0.78);
       border: 1px solid var(--glass-border);
       border-radius: 24px;
       padding: 2rem;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 210, 157, 0.08);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(var(--foam-rgb), 0.08);
     }
 
     /* Tabs bar - vertical sidebar on right */
@@ -1903,10 +2019,10 @@
       overflow-y: auto;
       max-height: 480px;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 157, 92, 0.15) transparent;
+      scrollbar-color: rgba(var(--accent-rgb), 0.15) transparent;
       background: rgba(42, 15, 30, 0.3);
       border-radius: 14px;
-      border: 1px solid rgba(255, 157, 92, 0.08);
+      border: 1px solid rgba(var(--accent-rgb), 0.08);
     }
 
     .notes-tabs-bar::-webkit-scrollbar {
@@ -1914,7 +2030,7 @@
     }
 
     .notes-tabs-bar::-webkit-scrollbar-thumb {
-      background: rgba(255, 157, 92, 0.15);
+      background: rgba(var(--accent-rgb), 0.15);
       border-radius: 100px;
     }
 
@@ -1924,7 +2040,7 @@
       gap: 0.35rem;
       padding: 0.45rem 0.65rem;
       border-radius: 10px;
-      border: 1px solid rgba(255, 157, 92, 0.12);
+      border: 1px solid rgba(var(--accent-rgb), 0.12);
       background: rgba(42, 15, 30, 0.5);
       color: var(--teal);
       font-family: 'DM Sans', sans-serif;
@@ -1937,13 +2053,13 @@
     }
 
     .notes-tab:hover {
-      border-color: rgba(255, 157, 92, 0.3);
+      border-color: rgba(var(--accent-rgb), 0.3);
       background: rgba(74, 28, 44, 0.5);
     }
 
     .notes-tab.active {
-      background: rgba(255, 157, 92, 0.12);
-      border-color: rgba(255, 157, 92, 0.35);
+      background: rgba(var(--accent-rgb), 0.12);
+      border-color: rgba(var(--accent-rgb), 0.35);
       color: var(--seafoam);
     }
 
@@ -1961,13 +2077,13 @@
 
     .notes-tab-label:focus {
       cursor: text;
-      border-bottom: 1px solid rgba(255, 157, 92, 0.35);
+      border-bottom: 1px solid rgba(var(--accent-rgb), 0.35);
     }
 
     .notes-tab-close {
       background: none;
       border: none;
-      color: rgba(255, 157, 92, 0.25);
+      color: rgba(var(--accent-rgb), 0.25);
       font-size: 0.9rem;
       cursor: pointer;
       padding: 0 2px;
@@ -1983,9 +2099,9 @@
       width: 100%;
       height: 28px;
       border-radius: 10px;
-      border: 1px dashed rgba(255, 157, 92, 0.25);
+      border: 1px dashed rgba(var(--accent-rgb), 0.25);
       background: transparent;
-      color: rgba(255, 157, 92, 0.45);
+      color: rgba(var(--accent-rgb), 0.45);
       font-size: 1rem;
       cursor: pointer;
       display: flex;
@@ -1996,9 +2112,9 @@
     }
 
     .btn-add-tab:hover {
-      border-color: rgba(255, 157, 92, 0.5);
+      border-color: rgba(var(--accent-rgb), 0.5);
       color: var(--seafoam);
-      background: rgba(255, 157, 92, 0.08);
+      background: rgba(var(--accent-rgb), 0.08);
     }
 
     /* Rich text toolbar */
@@ -2009,7 +2125,7 @@
       flex-wrap: wrap;
       border-radius: 14px 14px 0 0;
       background: rgba(42, 15, 30, 0.5);
-      border: 1px solid rgba(255, 157, 92, 0.1);
+      border: 1px solid rgba(var(--accent-rgb), 0.1);
       border-bottom: none;
       max-height: 0;
       opacity: 0;
@@ -2037,7 +2153,7 @@
       width: 38px;
       height: 24px;
       border-radius: 50%/40%;
-      border: 1px solid rgba(255, 157, 92, 0.25);
+      border: 1px solid rgba(var(--accent-rgb), 0.25);
       background: rgba(42, 15, 30, 0.6);
       cursor: pointer;
       display: flex;
@@ -2049,14 +2165,14 @@
     }
 
     .notes-toolbar-toggle:hover {
-      border-color: rgba(255, 157, 92, 0.5);
-      background: rgba(255, 157, 92, 0.1);
-      box-shadow: 0 0 12px rgba(255, 157, 92, 0.15);
+      border-color: rgba(var(--accent-rgb), 0.5);
+      background: rgba(var(--accent-rgb), 0.1);
+      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.15);
     }
 
     .notes-toolbar-toggle.active {
-      background: rgba(255, 157, 92, 0.15);
-      border-color: rgba(255, 157, 92, 0.4);
+      background: rgba(var(--accent-rgb), 0.15);
+      border-color: rgba(var(--accent-rgb), 0.4);
     }
 
     .notes-toolbar-toggle svg {
@@ -2080,27 +2196,27 @@
     }
 
     .notes-toolbar .tool-btn:hover {
-      border-color: rgba(255, 157, 92, 0.25);
-      background: rgba(255, 157, 92, 0.08);
+      border-color: rgba(var(--accent-rgb), 0.25);
+      background: rgba(var(--accent-rgb), 0.08);
       color: var(--seafoam);
     }
 
     .notes-toolbar .tool-btn.active {
-      background: rgba(255, 157, 92, 0.15);
-      border-color: rgba(255, 157, 92, 0.35);
+      background: rgba(var(--accent-rgb), 0.15);
+      border-color: rgba(var(--accent-rgb), 0.35);
       color: var(--seafoam);
     }
 
     .notes-toolbar .tool-sep {
       width: 1px;
       height: 20px;
-      background: rgba(255, 157, 92, 0.1);
+      background: rgba(var(--accent-rgb), 0.1);
       margin: 0 0.15rem;
     }
 
     .notes-toolbar select {
       background: rgba(42, 15, 30, 0.6);
-      border: 1px solid rgba(255, 157, 92, 0.15);
+      border: 1px solid rgba(var(--accent-rgb), 0.15);
       border-radius: 8px;
       color: var(--teal);
       font-family: 'DM Sans', sans-serif;
@@ -2113,7 +2229,7 @@
 
     .notes-toolbar select:hover,
     .notes-toolbar select:focus {
-      border-color: rgba(255, 157, 92, 0.35);
+      border-color: rgba(var(--accent-rgb), 0.35);
     }
 
     .notes-toolbar select option {
@@ -2126,7 +2242,7 @@
       appearance: none;
       width: 26px;
       height: 26px;
-      border: 1px solid rgba(255, 157, 92, 0.2);
+      border: 1px solid rgba(var(--accent-rgb), 0.2);
       border-radius: 6px;
       background: transparent;
       cursor: pointer;
@@ -2145,8 +2261,8 @@
     /* Rich text editor area */
     .notes-editor {
       border-radius: 0 0 14px 14px;
-      border: 1px solid rgba(255, 157, 92, 0.1);
-      border-top: 1px solid rgba(255, 157, 92, 0.06);
+      border: 1px solid rgba(var(--accent-rgb), 0.1);
+      border-top: 1px solid rgba(var(--accent-rgb), 0.06);
       background: rgba(34, 12, 24, 0.5);
       min-height: 380px;
       max-height: 600px;
@@ -2159,7 +2275,7 @@
       outline: none;
       cursor: text;
       scrollbar-width: thin;
-      scrollbar-color: rgba(255, 157, 92, 0.15) transparent;
+      scrollbar-color: rgba(var(--accent-rgb), 0.15) transparent;
     }
 
     .notes-editor::-webkit-scrollbar {
@@ -2167,12 +2283,12 @@
     }
 
     .notes-editor::-webkit-scrollbar-thumb {
-      background: rgba(255, 157, 92, 0.15);
+      background: rgba(var(--accent-rgb), 0.15);
       border-radius: 100px;
     }
 
     .notes-editor:focus {
-      border-color: rgba(255, 157, 92, 0.2);
+      border-color: rgba(var(--accent-rgb), 0.2);
     }
 
     .notes-editor:empty::before {
@@ -2186,7 +2302,7 @@
     .notes-editor h1,
     .notes-editor h2,
     .notes-editor h3 {
-      font-family: 'Cormorant Garant', serif;
+      font-family: 'Cormorant Garamond', serif;
       font-weight: 400;
       color: var(--foam);
       margin: 0.4em 0 0.2em;
@@ -2207,7 +2323,7 @@
     .notes-editor a {
       color: var(--seafoam);
       text-decoration: underline;
-      text-decoration-color: rgba(255, 157, 92, 0.4);
+      text-decoration-color: rgba(var(--accent-rgb), 0.4);
     }
 
     .notes-editor ul,
@@ -2221,7 +2337,7 @@
     }
 
     .notes-editor blockquote {
-      background: rgba(255, 157, 92, 0.06);
+      background: rgba(var(--accent-rgb), 0.06);
       border-radius: 10px;
       padding: 0.65rem 1rem;
       margin: 0.5em 0;
@@ -2233,12 +2349,12 @@
       max-width: 100%;
       border-radius: 12px;
       margin: 0.5rem 0;
-      border: 1px solid rgba(255, 157, 92, 0.1);
+      border: 1px solid rgba(var(--accent-rgb), 0.1);
     }
 
     .notes-editor hr {
       border: none;
-      border-top: 1px solid rgba(255, 157, 92, 0.12);
+      border-top: 1px solid rgba(var(--accent-rgb), 0.12);
       margin: 1rem 0;
     }
 
@@ -2308,11 +2424,183 @@
       width: 1px;
       height: 1px;
     }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      z-index: 100;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--glass-rgb), 0.85);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .theme-toggle:hover {
+      background: rgba(var(--accent-rgb), 0.15);
+      transform: scale(1.06);
+    }
+
+    @media (max-width: 700px) {
+      .theme-toggle {
+        top: 1rem;
+        left: 1rem;
+        width: 36px;
+        height: 36px;
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Visible keyboard focus */
+    :where(button, [role="tab"], [role="button"], input[type="range"], [contenteditable]):focus-visible {
+      outline: 2px solid rgba(var(--accent-rgb), 0.6);
+      outline-offset: 2px;
+    }
+
+    /* Keyboard shortcuts overlay */
+    .shortcuts-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .shortcuts-overlay[hidden] {
+      display: none;
+    }
+
+    .shortcuts-card {
+      background: rgba(var(--glass-rgb), 0.95);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.5rem 1.75rem;
+      width: min(90vw, 380px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .shortcuts-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .shortcuts-head h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      color: var(--pearl);
+    }
+
+    .shortcuts-close {
+      background: none;
+      border: none;
+      color: var(--teal);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0.25rem;
+    }
+
+    .shortcuts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin: 0;
+    }
+
+    .shortcuts-list>div {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .shortcuts-list dt {
+      min-width: 90px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .shortcuts-list dd {
+      font-size: 0.82rem;
+      color: var(--sand);
+      margin: 0;
+    }
+
+    .shortcuts-list kbd {
+      font-family: inherit;
+      font-size: 0.68rem;
+      color: var(--seafoam);
+      background: rgba(var(--accent-rgb), 0.12);
+      border: 1px solid rgba(var(--accent-rgb), 0.3);
+      border-radius: 6px;
+      padding: 0.15rem 0.45rem;
+    }
+
+    /* Ocean theme — the original palette, restored from git history */
+    html[data-theme="ocean"] {
+      --accent-rgb: 42, 191, 191;
+      --foam-rgb: 126, 232, 232;
+      --glass-rgb: 10, 40, 70;
+      --break-accent: #5eeab0;
+      --break-accent-rgb: 14, 200, 140;
+      --deep: #0a1628;
+      --abyss: #061020;
+      --midnight: #0d2240;
+      --ocean: #0e4d6e;
+      --teal: #1a7a8a;
+      --seafoam: #2abfbf;
+      --foam: #7ee8e8;
+      --sand: #c8e8e0;
+      --pearl: #e8f6f5;
+      --glow: rgba(42, 191, 191, 0.15);
+      --glow-strong: rgba(42, 191, 191, 0.35);
+      --glass: rgba(10, 40, 70, 0.55);
+      --glass-border: rgba(42, 191, 191, 0.18);
+    }
+
+    html[data-theme="ocean"] .ocean-bg {
+      background: radial-gradient(ellipse at 20% 0%, #0e3d5e 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, #0a2a45 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 50%, #061828 0%, #030c18 100%);
+    }
+
+    html[data-theme="ocean"] .sunset-sun,
+    html[data-theme="ocean"] .palm {
+      display: none;
+    }
+
+    html[data-theme="ocean"] .wave-1 {
+      background: rgba(14, 77, 110, 0.25);
+    }
+
+    html[data-theme="ocean"] .wave-2 {
+      background: rgba(26, 122, 138, 0.18);
+    }
+
+    html[data-theme="ocean"] .wave-3 {
+      background: rgba(42, 191, 191, 0.06);
+    }
   </style>
 </head>
 
 <body>
 
+  <button type="button" class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Switch theme">🌊</button>
   <div class="ocean-bg"></div>
   <div class="sunset-sun"></div>
   <div class="particles" id="particles"></div>
@@ -2357,7 +2645,9 @@
       <p class="tagline">Flow with the summer tide</p>
 
       <div class="music-player minimized" id="musicPlayer">
-        <div class="music-header" onclick="toggleSoundscape(event)">
+        <div class="music-header" id="musicHeader" role="button" tabindex="0" aria-expanded="false"
+          aria-label="Soundscape player" onclick="toggleSoundscape(event)"
+          onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleSoundscape(event)}">
           <span class="music-title">Soundscape</span>
           <div class="wave-bars" id="waveBars">
             <span></span><span></span><span></span><span></span><span></span>
@@ -2365,15 +2655,6 @@
         </div>
         <div class="music-body">
           <div class="track-list">
-            <!-- Hidden YouTube tracks (kept for later)
-            <button class="track-btn" onclick="selectTrack(0)" id="track-0">
-              <span class="track-icon">🎵</span>
-              <div class="track-info">
-                <span class="track-name">Lo-fi Ocean</span>
-                <span class="track-desc">YouTube · ambient mix</span>
-              </div>
-            </button>
-            -->
             <button class="track-btn" onclick="selectTrack(1)" id="track-1">
               <span class="track-icon">🌊</span>
               <div class="track-info">
@@ -2402,15 +2683,6 @@
                 <span class="track-desc">Generative · never repeats</span>
               </div>
             </button>
-            <!-- Hidden YouTube tracks (kept for later)
-            <button class="track-btn" onclick="selectTrack(5)" id="track-5">
-              <span class="track-icon">🎧</span>
-              <div class="track-info">
-                <span class="track-name">Lo-fi Beats</span>
-                <span class="track-desc">YouTube · chill beats</span>
-              </div>
-            </button>
-            -->
             <div id="customTracksList"></div>
             <hr class="track-divider">
             <button type="button" class="btn-add-track" id="btnAddTrack" onclick="toggleAddTrackForm()">+ Add Track</button>
@@ -2425,8 +2697,9 @@
             </div>
           </div>
           <div class="vol-row">
-            <label>Vol</label>
-            <input type="range" id="volSlider" min="0" max="100" value="35" oninput="setVolume(this.value)">
+            <label for="volSlider">Vol</label>
+            <input type="range" id="volSlider" min="0" max="100" value="35" aria-label="Volume"
+              oninput="setVolume(this.value)">
           </div>
         </div>
       </div>
@@ -2434,14 +2707,17 @@
 
     <!-- TIMER CARD -->
     <div class="card timer-card">
-      <div class="timer-tabs">
-        <button class="timer-tab active" onclick="switchTimerTab('pomodoro')">Pomodoro</button>
-        <button class="timer-tab" onclick="switchTimerTab('timer')">Timer</button>
-        <button class="timer-tab" onclick="switchTimerTab('stopwatch')">Stopwatch</button>
+      <div class="timer-tabs" role="tablist" aria-label="Timer mode">
+        <button class="timer-tab active" id="tab-pomodoro" role="tab" aria-selected="true"
+          aria-controls="panelPomodoro" onclick="switchTimerTab('pomodoro')">Pomodoro</button>
+        <button class="timer-tab" id="tab-timer" role="tab" aria-selected="false" aria-controls="panelTimer"
+          tabindex="-1" onclick="switchTimerTab('timer')">Timer</button>
+        <button class="timer-tab" id="tab-stopwatch" role="tab" aria-selected="false" aria-controls="panelStopwatch"
+          tabindex="-1" onclick="switchTimerTab('stopwatch')">Stopwatch</button>
       </div>
 
       <!-- POMODORO TAB -->
-      <div class="timer-tab-panel active" id="panelPomodoro">
+      <div class="timer-tab-panel active" id="panelPomodoro" role="tabpanel" aria-labelledby="tab-pomodoro">
         <div class="phase-badge work" id="phaseBadge">
           <span class="phase-dot"></span>
           <span id="phaseText">Deep Work</span>
@@ -2487,11 +2763,21 @@
             <div class="session-dot"></div>
           </div>
         </div>
+
+        <div class="stats-block collapsed" id="statsBlock">
+          <button type="button" class="stats-summary" id="statsSummary" onclick="toggleStats()"
+            aria-expanded="false" aria-controls="statsChart">
+            <span class="stats-label">Focus</span>
+            <span class="stats-text" id="statsText">Today 0m</span>
+            <span class="stats-chevron" aria-hidden="true">▾</span>
+          </button>
+          <div class="stats-chart" id="statsChart" role="img" aria-label=""></div>
+        </div>
       </div>
 
       <!-- TIMER TAB -->
-      <div class="timer-tab-panel" id="panelTimer">
-        <div class="phase-badge work" style="background: rgba(255, 157, 92, 0.15); border: 1px solid rgba(255, 157, 92, 0.3); color: var(--seafoam);">
+      <div class="timer-tab-panel" id="panelTimer" role="tabpanel" aria-labelledby="tab-timer">
+        <div class="phase-badge work" style="background: rgba(var(--accent-rgb), 0.15); border: 1px solid rgba(var(--accent-rgb), 0.3); color: var(--seafoam);">
           <span class="phase-dot" style="background: var(--seafoam);"></span>
           <span id="ctPhaseText">Countdown</span>
         </div>
@@ -2529,7 +2815,7 @@
       </div>
 
       <!-- STOPWATCH TAB -->
-      <div class="timer-tab-panel" id="panelStopwatch">
+      <div class="timer-tab-panel" id="panelStopwatch" role="tabpanel" aria-labelledby="tab-stopwatch">
         <div class="sw-display-box">
           <svg class="sw-border-svg" preserveAspectRatio="none">
             <rect class="sw-border-glow" x="6" y="6" rx="12" ry="12" width="calc(100% - 12px)" height="calc(100% - 12px)" />
@@ -2553,7 +2839,7 @@
     <div class="card tasks-card">
       <div class="card-title">Tasks</div>
 
-      <div class="tasks-tabs" id="tasksTabs"></div>
+      <div class="tasks-tabs" id="tasksTabs" role="tablist" aria-label="Task lists"></div>
 
       <div class="tasks-progress">
         <div class="progress-bar-track">
@@ -2637,7 +2923,7 @@
       <div class="notes-content-area">
         <div class="notes-main" style="position:relative">
           <button class="notes-toolbar-toggle" id="notesToolbarToggle" onclick="toggleNotesToolbar()"
-            title="Toggle formatting tools">
+            title="Toggle formatting tools" aria-label="Toggle formatting tools">
             <svg viewBox="0 0 30 16" fill="none">
               <path d="M0 10 Q5 4 10 8 T20 6 T30 9" stroke="var(--seafoam)" stroke-width="1.5" fill="none"
                 opacity="0.7" />
@@ -2682,7 +2968,7 @@
           </div>
 
           <div class="notes-editor" id="notesEditor" contenteditable="true" spellcheck="true"
-            style="border-radius:14px"></div>
+            role="textbox" aria-multiline="true" aria-label="Free notes" style="border-radius:14px"></div>
         </div>
         <div class="notes-tabs-bar" id="notesTabsBar"></div>
       </div>
@@ -2691,9 +2977,121 @@
 
   <input type="file" id="notesImageInput" accept="image/*" onchange="notesHandleImage(event)">
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="shortcuts-overlay" id="shortcutsOverlay" hidden role="dialog" aria-modal="true"
+    aria-labelledby="shortcutsTitle" onclick="if(event.target===this)toggleShortcutsOverlay(false)">
+    <div class="shortcuts-card">
+      <div class="shortcuts-head">
+        <h2 id="shortcutsTitle">Keyboard shortcuts</h2>
+        <button type="button" class="shortcuts-close" id="shortcutsClose" onclick="toggleShortcutsOverlay(false)"
+          aria-label="Close">✕</button>
+      </div>
+      <dl class="shortcuts-list">
+        <div>
+          <dt><kbd>Space</kbd></dt>
+          <dd>Start / pause the active timer</dd>
+        </div>
+        <div>
+          <dt><kbd>R</kbd></dt>
+          <dd>Reset the active timer</dd>
+        </div>
+        <div>
+          <dt><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd></dt>
+          <dd>Pomodoro · Timer · Stopwatch</dd>
+        </div>
+        <div>
+          <dt><kbd>?</kbd></dt>
+          <dd>Show / hide this help</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
 
   <script>
+    // ─── Settings Persistence ────────────────────────────────────────────────────
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem('tideFocusSettings');
+        if (raw) {
+          const s = JSON.parse(raw);
+          if (s && typeof s === 'object') return s;
+        }
+      } catch (e) { }
+      return null;
+    }
+
+    function saveSettings(patch) {
+      try {
+        const next = Object.assign({ v: 1 }, loadSettings() || {}, patch);
+        localStorage.setItem('tideFocusSettings', JSON.stringify(next));
+      } catch (e) { }
+    }
+
+    function initSettings() {
+      const s = loadSettings();
+      if (!s) return;
+      if (s.workMin >= 1 && s.workMin <= 120) document.getElementById('workMin').value = s.workMin;
+      if (s.breakMin >= 1 && s.breakMin <= 60) document.getElementById('breakMin').value = s.breakMin;
+      if (s.ctMin >= 0 && s.ctMin <= 99) document.getElementById('ctMinInput').value = s.ctMin;
+      if (s.ctSec >= 0 && s.ctSec <= 59) document.getElementById('ctSecInput').value = s.ctSec;
+      if (s.volume >= 0 && s.volume <= 100) document.getElementById('volSlider').value = s.volume;
+      if (s.track !== undefined && s.track !== null) currentTrack = s.track;
+      if (s.timerTab === 'timer' || s.timerTab === 'stopwatch') switchTimerTab(s.timerTab);
+      if (s.theme === 'ocean') applyTheme('ocean');
+    }
+
+    // ─── Theme Switcher ──────────────────────────────────────────────────────────
+    const THEMES = {
+      summer: {
+        tagline: 'Flow with the summer tide',
+        breakLabel: 'Sunset Break',
+        workToast: '🌅 Work session complete — catch the sunset',
+        breakToast: '🌴 Break over — back to the flow',
+        themeColor: '#1a0b14',
+        toggleIcon: '🌊',
+        favicon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%232a0f1e'/><circle cx='16' cy='17' r='6' fill='%23ff9d5c'/><path d='M3 18 Q8 12 13 16 T23 14 T31 17' stroke='%23ff9d5c' stroke-width='2' fill='none'/><path d='M1 22 Q7 16 14 20 T26 17 T32 21' stroke='%23cf7d52' stroke-width='1.5' fill='none' opacity='.7'/></svg>"
+      },
+      ocean: {
+        tagline: 'Flow with the rhythm of the sea',
+        breakLabel: 'Ocean Break',
+        workToast: '🌊 Work session complete — take a breath',
+        breakToast: '🐚 Break over — dive back in',
+        themeColor: '#061020',
+        toggleIcon: '🌅',
+        favicon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%230a1628'/><path d='M3 18 Q8 12 13 16 T23 14 T31 17' stroke='%232abfbf' stroke-width='2' fill='none'/><path d='M1 22 Q7 16 14 20 T26 17 T32 21' stroke='%231a7a8a' stroke-width='1.5' fill='none' opacity='.7'/></svg>"
+      }
+    };
+    let activeTheme = document.documentElement.dataset.theme === 'ocean' ? 'ocean' : 'summer';
+
+    function applyTheme(name) {
+      activeTheme = THEMES[name] ? name : 'summer';
+      const t = THEMES[activeTheme];
+      document.documentElement.dataset.theme = activeTheme;
+      document.querySelector('.tagline').textContent = t.tagline;
+      document.querySelector('link[rel="icon"]').href = t.favicon;
+      document.getElementById('themeColorMeta').content = t.themeColor;
+      document.getElementById('themeToggle').textContent = t.toggleIcon;
+      updatePhaseUI();
+    }
+
+    function toggleTheme() {
+      applyTheme(activeTheme === 'summer' ? 'ocean' : 'summer');
+      saveSettings({ theme: activeTheme });
+    }
+
+    // ─── Desktop Notifications ───────────────────────────────────────────────────
+    function requestNotifyPermission() {
+      if ('Notification' in window && Notification.permission === 'default') {
+        try { Notification.requestPermission(); } catch (e) { }
+      }
+    }
+
+    function notifyDone(title, body) {
+      if (!('Notification' in window) || Notification.permission !== 'granted' || !document.hidden) return;
+      try { new Notification(title, { body: body, icon: './icon-192.png' }); } catch (e) { }
+    }
+
     // ─── Timer State ─────────────────────────────────────────────────────────────
     let interval = null;
     let isRunning = false;
@@ -2714,6 +3112,10 @@
 
     function settingChanged() {
       if (!isRunning) initTimer();
+      saveSettings({
+        workMin: parseInt(document.getElementById('workMin').value) || 25,
+        breakMin: parseInt(document.getElementById('breakMin').value) || 5
+      });
     }
 
     function renderTimer() {
@@ -2723,7 +3125,18 @@
       if (document.activeElement !== el) el.value = `${m}:${s}`;
       const progress = totalSec > 0 ? (totalSec - remainSec) / totalSec : 0;
       document.getElementById('ringProgress').style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
-      document.title = `Tide Focus`;
+      updateTitle();
+    }
+
+    function updateTitle() {
+      const fmt = sec => `${Math.floor(sec / 60).toString().padStart(2, '0')}:${(sec % 60).toString().padStart(2, '0')}`;
+      if (isRunning) {
+        document.title = `${fmt(remainSec)} — ${isWork ? 'Focus' : 'Break'} · Tide Focus`;
+      } else if (ctRunning) {
+        document.title = `${fmt(ctRemainSec)} — Timer · Tide Focus`;
+      } else {
+        document.title = 'Tide Focus';
+      }
     }
 
     function parseDirectEdit(val) {
@@ -2752,6 +3165,7 @@
     let pomodoroRemainAtStart = 0; // remainSec when started
 
     function startTimer() {
+      requestNotifyPermission();
       isRunning = true;
       pomodoroStartedAt = Date.now();
       pomodoroRemainAtStart = remainSec;
@@ -2796,17 +3210,20 @@
 
       if (isWork) {
         playTone('work');
-        showToast('🌅 Work session complete — catch the sunset');
+        showToast(THEMES[activeTheme].workToast);
+        notifyDone('Work session complete', 'Time for a break 🌅');
         showRipple();
         sessionsCompleted = Math.min(sessionsCompleted + 1, 4);
         updateSessionDots();
+        recordSession(totalSec);
         isWork = false;
         updatePhaseUI();
         totalSec = getBreakSec();
         remainSec = totalSec;
       } else {
         playTone('break');
-        showToast('🌴 Break over — back to the flow');
+        showToast(THEMES[activeTheme].breakToast);
+        notifyDone('Break over', 'Back to the flow 🌴');
         isWork = true;
         updatePhaseUI();
         totalSec = getWorkSec();
@@ -2827,7 +3244,7 @@
         ring.classList.remove('break-ring');
       } else {
         badge.className = 'phase-badge break';
-        text.textContent = 'Sunset Break';
+        text.textContent = THEMES[activeTheme].breakLabel;
         ring.classList.add('break-ring');
       }
     }
@@ -2839,13 +3256,112 @@
       });
     }
 
+    // ─── Focus Stats ─────────────────────────────────────────────────────────────
+    function loadStats() {
+      try {
+        const raw = localStorage.getItem('tideFocusStats');
+        if (raw) {
+          const s = JSON.parse(raw);
+          if (s && typeof s === 'object' && s.days && typeof s.days === 'object') return s;
+        }
+      } catch (e) { }
+      return { v: 1, days: {} };
+    }
+
+    function saveStats(stats) {
+      try { localStorage.setItem('tideFocusStats', JSON.stringify(stats)); } catch (e) { }
+    }
+
+    function statsDayKey(date) {
+      const m = (date.getMonth() + 1).toString().padStart(2, '0');
+      const d = date.getDate().toString().padStart(2, '0');
+      return `${date.getFullYear()}-${m}-${d}`;
+    }
+
+    function recordSession(sec) {
+      const stats = loadStats();
+      const key = statsDayKey(new Date());
+      const day = stats.days[key] || { sec: 0, n: 0 };
+      day.sec += sec;
+      day.n += 1;
+      stats.days[key] = day;
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 400);
+      const cutoffKey = statsDayKey(cutoff);
+      Object.keys(stats.days).forEach(k => { if (k < cutoffKey) delete stats.days[k]; });
+      saveStats(stats);
+      renderStats();
+    }
+
+    function getStreak(stats) {
+      let streak = 0;
+      const d = new Date();
+      // A quiet today doesn't break the streak — start counting from yesterday
+      if (!((stats.days[statsDayKey(d)] || {}).sec > 0)) d.setDate(d.getDate() - 1);
+      while ((stats.days[statsDayKey(d)] || {}).sec > 0) {
+        streak += 1;
+        d.setDate(d.getDate() - 1);
+      }
+      return streak;
+    }
+
+    function fmtDuration(sec) {
+      const h = Math.floor(sec / 3600);
+      const m = Math.round((sec % 3600) / 60);
+      return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    }
+
+    function renderStats() {
+      const stats = loadStats();
+      const todaySec = (stats.days[statsDayKey(new Date())] || {}).sec || 0;
+      const streak = getStreak(stats);
+      let text = `Today ${fmtDuration(todaySec)}`;
+      if (streak > 0) text += ` · ${streak}-day streak`;
+      document.getElementById('statsText').textContent = text;
+
+      const days = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        days.push({
+          letter: d.toLocaleDateString(undefined, { weekday: 'short' }).charAt(0),
+          name: d.toLocaleDateString(undefined, { weekday: 'long' }),
+          sec: (stats.days[statsDayKey(d)] || {}).sec || 0
+        });
+      }
+      const max = Math.max(1, ...days.map(x => x.sec));
+      const chart = document.getElementById('statsChart');
+      chart.innerHTML = days.map(x => `
+        <div class="stats-col" title="${x.name}: ${fmtDuration(x.sec)}">
+          <div class="stats-bar-track"><div class="stats-bar" style="height:${Math.round(x.sec / max * 100)}%"></div></div>
+          <span class="stats-day">${x.letter}</span>
+        </div>`).join('');
+      chart.setAttribute('aria-label',
+        'Focus time last 7 days: ' + days.map(x => `${x.name} ${fmtDuration(x.sec)}`).join(', '));
+    }
+
+    function toggleStats() {
+      const block = document.getElementById('statsBlock');
+      block.classList.toggle('collapsed');
+      document.getElementById('statsSummary')
+        .setAttribute('aria-expanded', String(!block.classList.contains('collapsed')));
+    }
+
     // ─── Tab Switching ───────────────────────────────────────────────────────────
+    let activeTimerTab = 'pomodoro';
     function switchTimerTab(tab) {
+      activeTimerTab = tab;
+      saveSettings({ timerTab: tab });
       document.querySelectorAll('.timer-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.timer-tab-panel').forEach(p => p.classList.remove('active'));
       const tabMap = { pomodoro: 0, timer: 1, stopwatch: 2 };
       document.querySelectorAll('.timer-tab')[tabMap[tab]].classList.add('active');
       document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+      document.querySelectorAll('.timer-tab').forEach(t => {
+        const selected = t.classList.contains('active');
+        t.setAttribute('aria-selected', String(selected));
+        t.tabIndex = selected ? 0 : -1;
+      });
     }
 
     // ─── Countdown Timer ─────────────────────────────────────────────────────────
@@ -2868,6 +3384,10 @@
 
     function ctSettingChanged() {
       if (!ctRunning) ctInit();
+      saveSettings({
+        ctMin: parseInt(document.getElementById('ctMinInput').value) || 0,
+        ctSec: parseInt(document.getElementById('ctSecInput').value) || 0
+      });
     }
 
     function ctRender() {
@@ -2877,6 +3397,7 @@
       if (document.activeElement !== el) el.value = `${m}:${s}`;
       const progress = ctTotalSec > 0 ? (ctTotalSec - ctRemainSec) / ctTotalSec : 0;
       document.getElementById('ctRingProgress').style.strokeDashoffset = CIRCUMFERENCE * (1 - progress);
+      updateTitle();
     }
 
     function ctParseEdit(val) {
@@ -2895,6 +3416,7 @@
       ctTotalSec = ctRemainSec;
       document.getElementById('ctMinInput').value = m;
       document.getElementById('ctSecInput').value = s;
+      saveSettings({ ctMin: m, ctSec: s });
       ctRender();
     }
 
@@ -2907,6 +3429,7 @@
 
     function ctStart() {
       if (ctRemainSec <= 0) return;
+      requestNotifyPermission();
       ctRunning = true;
       ctStartedAt = Date.now();
       ctRemainAtStart = ctRemainSec;
@@ -2945,6 +3468,7 @@
         document.getElementById('ctPhaseText').textContent = 'Done';
         playTone('work');
         showToast('⏱ Timer complete');
+        notifyDone('Timer complete', 'Your countdown has finished ⏱');
         showRipple();
         return;
       }
@@ -3070,6 +3594,9 @@
       taskTabs.tabs.forEach(tab => {
         const el = document.createElement('div');
         el.className = 'task-tab' + (tab.id === taskTabs.activeId ? ' active' : '');
+        el.setAttribute('role', 'tab');
+        el.setAttribute('aria-selected', String(tab.id === taskTabs.activeId));
+        el.tabIndex = tab.id === taskTabs.activeId ? 0 : -1;
         el.onclick = (e) => {
           if (e.target.classList.contains('tab-close') || e.target.classList.contains('tab-name')) return;
           switchTab(tab.id);
@@ -3093,6 +3620,7 @@
           close.className = 'tab-close';
           close.textContent = '×';
           close.title = 'Delete tab';
+          close.setAttribute('aria-label', 'Delete tab ' + tab.name);
           close.onclick = (e) => { e.stopPropagation(); deleteTab(tab.id); };
           el.appendChild(close);
         }
@@ -3102,6 +3630,7 @@
       addBtn.className = 'task-tab-add';
       addBtn.textContent = '+';
       addBtn.title = 'New tab';
+      addBtn.setAttribute('aria-label', 'New task tab');
       addBtn.onclick = newTab;
       bar.appendChild(addBtn);
     }
@@ -3476,10 +4005,10 @@
     }
 
     // ─── Multi-track Soundscape ───────────────────────────────────────────────────
-    // tracks: 0=youtube(lofi ocean)  1=ocean  2=brown  3=gamma  4=limitless  5=youtube(lofi beats)
-    const ytVideoIds = { 0: '4MFOBeUCPkw', 4: '4MFOBeUCPkw', 5: 'jfKfPfyJRdk' };
+    // tracks: 1=ocean  2=brown  3=gamma  4=limitless (YouTube)
+    const ytVideoIds = { 4: '4MFOBeUCPkw' };
     function getStartSeconds(track) { return track === 4 ? Math.floor(Math.random() * 3600) : 0; }
-    let currentTrack = 0;
+    let currentTrack = -1;
     let isPlaying = false;
     let activeNodes = [];
     let masterGainNode = null;
@@ -3598,89 +4127,6 @@
       nodes.push(ns);
 
       return { stop: () => nodes.forEach(n => { try { n.stop(); } catch (e) { } }) };
-    }
-
-    // ── Limitless: generative ambient music (track 4) ──
-    function buildLimitless(ac, master) {
-      const nodes = [];
-      let schedulerTimer = null;
-
-      // Simple feedback delay for warmth/space
-      const delayNode = ac.createDelay(2.0); delayNode.delayTime.value = 0.45;
-      const fbGain = ac.createGain(); fbGain.gain.value = 0.38;
-      const delayLp = ac.createBiquadFilter(); delayLp.type = 'lowpass'; delayLp.frequency.value = 1800;
-      const wetGain = ac.createGain(); wetGain.gain.value = 0.28;
-      delayNode.connect(delayLp); delayLp.connect(fbGain); fbGain.connect(delayNode);
-      delayNode.connect(wetGain); wetGain.connect(master);
-
-      // C pentatonic: C D E G A across 3 octaves
-      const penta = [
-        65.41, 73.42, 82.41, 98.00, 110.00,
-        130.81, 146.83, 164.81, 196.00, 220.00,
-        261.63, 293.66, 329.63, 392.00, 440.00
-      ];
-
-      // Chord voicings (indices into penta)
-      const chords = [
-        [0, 4, 7], [2, 5, 9], [1, 4, 8], [3, 6, 9], [0, 3, 7], [4, 7, 10], [2, 6, 9]
-      ];
-
-      function softNote(freq, dur, when, vol = 0.07, wave = 'sine') {
-        const osc = ac.createOscillator(), g = ac.createGain();
-        osc.type = wave; osc.frequency.value = freq;
-        const atk = Math.min(dur * 0.2, 1.5), rel = Math.min(dur * 0.4, 2.5);
-        g.gain.setValueAtTime(0, when);
-        g.gain.linearRampToValueAtTime(vol, when + atk);
-        g.gain.setValueAtTime(vol, when + dur - rel);
-        g.gain.linearRampToValueAtTime(0, when + dur);
-        osc.connect(g);
-        g.connect(master);
-        g.connect(delayNode);
-        osc.start(when); osc.stop(when + dur + 0.05);
-        nodes.push(osc);
-      }
-
-      let nextBeat = ac.currentTime + 0.2;
-
-      function schedule() {
-        const lookahead = 4.0; // schedule 4s ahead
-        while (nextBeat < ac.currentTime + lookahead) {
-          const chord = chords[Math.floor(Math.random() * chords.length)];
-          const chordDur = 5 + Math.random() * 6;
-
-          // Pad voices
-          chord.forEach((idx, i) => {
-            if (idx < penta.length) {
-              softNote(penta[idx], chordDur, nextBeat + i * 0.08, 0.055 + Math.random() * 0.02, 'sine');
-            }
-          });
-
-          // Occasional high melody note
-          if (Math.random() > 0.35) {
-            const hiIdx = 10 + Math.floor(Math.random() * 5);
-            const melDelay = 1 + Math.random() * (chordDur * 0.5);
-            softNote(penta[hiIdx], 2 + Math.random() * 2, nextBeat + melDelay, 0.035, 'sine');
-          }
-
-          // Rare bass pulse
-          if (Math.random() > 0.55) {
-            softNote(penta[chord[0]] * 0.5, 3 + Math.random() * 2, nextBeat, 0.07, 'sine');
-          }
-
-          nextBeat += chordDur * 0.65 + Math.random() * 2;
-        }
-
-        schedulerTimer = setTimeout(schedule, 2000);
-      }
-
-      schedule();
-
-      return {
-        stop: () => {
-          clearTimeout(schedulerTimer);
-          nodes.forEach(n => { try { n.stop(); } catch (e) { } });
-        }
-      };
     }
 
     // ─── Custom Tracks ────────────────────────────────────────────────────────────
@@ -3806,8 +4252,8 @@
             <span class="track-desc">${t.desc}</span>
           </div>
           <div class="track-actions">
-            <button class="track-action" onclick="editCustomTrack(${t.id}, event)" title="Edit">&#9998;</button>
-            <button class="track-action" onclick="deleteCustomTrack(${t.id}, event)" title="Remove">&times;</button>
+            <button class="track-action" onclick="editCustomTrack(${t.id}, event)" title="Edit" aria-label="Edit track">&#9998;</button>
+            <button class="track-action" onclick="deleteCustomTrack(${t.id}, event)" title="Remove" aria-label="Remove track">&times;</button>
           </div>
         </div>`;
       }).join('');
@@ -3838,6 +4284,7 @@
     function getVolPct() { return parseInt(document.getElementById('volSlider').value); }
 
     function startCurrentTrack() {
+      if (currentTrack === -1) return;
       const ac = getCtx();
       masterGainNode = ac.createGain();
       masterGainNode.gain.setValueAtTime(0, ac.currentTime);
@@ -3909,6 +4356,7 @@
       if (wasBusy) stopCurrentTrack(false);
       isPlaying = false;
       currentTrack = idx;
+      saveSettings({ track: idx });
       updateTrackUI(idx);
 
       const delay = wasBusy ? 1400 : 50;
@@ -3929,6 +4377,8 @@
     function toggleSoundscape(e) {
       const player = document.getElementById('musicPlayer');
       player.classList.toggle('minimized');
+      document.getElementById('musicHeader')
+        .setAttribute('aria-expanded', String(!player.classList.contains('minimized')));
       updateWaveBars();
     }
 
@@ -3944,6 +4394,7 @@
         masterGainNode.gain.linearRampToValueAtTime(v * 0.75, ac.currentTime + 0.1);
       }
       if (ytVideoIds[currentTrack] && ytReady && ytPlayer) ytPlayer.setVolume(parseInt(val));
+      saveSettings({ volume: parseInt(val) || 0 });
     }
     // ─── Free Notes Engine (Rich Text) ────────────────────────────────────────
     let notesTabs = [];
@@ -4192,14 +4643,78 @@
     notesEditorEl.addEventListener('paste', notesHandlePaste);
 
 
+    // ─── Tablist arrow-key navigation ────────────────────────────────────────────
+    document.querySelectorAll('[role="tablist"]').forEach(list => {
+      list.addEventListener('keydown', e => {
+        const tabs = [...list.querySelectorAll('[role="tab"]')];
+        const i = tabs.indexOf(e.target.closest('[role="tab"]'));
+        if (i === -1) return;
+        if ((e.key === 'Enter' || e.key === ' ') && e.target === tabs[i] && tabs[i].tagName !== 'BUTTON') {
+          e.preventDefault();
+          tabs[i].click();
+          return;
+        }
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+        if (e.target.closest('input')) return; // don't hijack arrows while renaming a tab
+        e.preventDefault();
+        let n = e.key === 'ArrowLeft' ? i - 1 : e.key === 'ArrowRight' ? i + 1 : e.key === 'Home' ? 0 : tabs.length - 1;
+        n = (n + tabs.length) % tabs.length;
+        tabs[n].click();
+        // Re-query: task tabs are re-rendered on switch, so the old node may be gone
+        const fresh = list.querySelectorAll('[role="tab"]')[n];
+        if (fresh) fresh.focus();
+      });
+    });
+
+    // ─── Keyboard Shortcuts ──────────────────────────────────────────────────────
+    function toggleShortcutsOverlay(show) {
+      const overlay = document.getElementById('shortcutsOverlay');
+      const wantShow = show !== undefined ? show : overlay.hidden;
+      overlay.hidden = !wantShow;
+      if (wantShow) document.getElementById('shortcutsClose').focus();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const overlay = document.getElementById('shortcutsOverlay');
+      if (e.key === 'Escape') {
+        if (!overlay.hidden) { toggleShortcutsOverlay(false); e.preventDefault(); }
+        return;
+      }
+      if (e.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+      if (e.key === '?') { toggleShortcutsOverlay(); e.preventDefault(); return; }
+      if (!overlay.hidden) return;
+      if (e.key === ' ') {
+        if (e.target.closest('button')) return; // a focused button's native click already fires
+        e.preventDefault();
+        if (activeTimerTab === 'pomodoro') toggleTimer();
+        else if (activeTimerTab === 'timer') ctToggle();
+        else swToggle();
+      } else if (e.key === 'r' || e.key === 'R') {
+        if (activeTimerTab === 'pomodoro') resetTimer();
+        else if (activeTimerTab === 'timer') ctReset();
+        else swReset();
+      } else if (e.key === '1') switchTimerTab('pomodoro');
+      else if (e.key === '2') switchTimerTab('timer');
+      else if (e.key === '3') switchTimerTab('stopwatch');
+    });
+
     createParticles();
+    initSettings();
+    renderStats();
     initTimer();
     ctInit();
     swRender();
     renderTabs();
     renderTasks();
     try { loadCustomTracks(); } catch(e) { }
+    updateTrackUI(currentTrack); // restore saved track highlight (no autoplay)
     initNotes();
+
+    if ('serviceWorker' in navigator &&
+        (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+      navigator.serviceWorker.register('./sw.js').catch(() => { });
+    }
   </script>
 </body>
 
