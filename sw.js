@@ -1,7 +1,7 @@
 // Tide Focus service worker.
 // Allowlist interception: only same-origin + Google Fonts are handled here.
 // YouTube, Google Identity/Drive, and Spotify requests fall through untouched.
-const CACHE = 'tidefocus-v1';
+const CACHE = 'tidefocus-v2';
 const PRECACHE = ['./', './index.html', './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
