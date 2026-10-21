@@ -579,7 +579,7 @@
       top: 2px;
       bottom: 2px;
       left: 2px;
-      width: calc((100% - 4px) / 3);
+      width: calc((100% - 4px) / 4);
       pointer-events: none;
       will-change: transform;
     }
@@ -622,6 +622,25 @@
 
     .seg-btn:focus-visible {
       outline-offset: -2px;
+    }
+
+    /* A session on the clock stays visible from the other tabs */
+    .seg-dot {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.45rem;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--tint);
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity var(--dur) var(--ease-inout), transform var(--dur) var(--ease-out);
+    }
+
+    .seg-btn.on .seg-dot {
+      opacity: 1;
+      transform: none;
     }
 
     .timer-tab-panel {
@@ -1035,6 +1054,213 @@
       display: none;
     }
 
+    /* Time clock — built like the stopwatch tab: display box, one control, a list */
+    .clock-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .clock-head .phase-badge {
+      margin-bottom: 0;
+    }
+
+    /* The export button shares the badge's row without making it taller than the other tabs' */
+    .clock-head .icon-btn {
+      margin-block: -0.35rem;
+    }
+
+    .phase-badge.idle {
+      background: var(--fill);
+      color: var(--label-2);
+    }
+
+    .phase-badge.idle .phase-dot {
+      animation: none;
+      opacity: 0.5;
+    }
+
+    .clock-display {
+      gap: 0.6rem;
+    }
+
+    .clock-elapsed {
+      transition: color var(--dur) var(--ease-inout);
+    }
+
+    .clock-panel:not(.on) .clock-elapsed {
+      color: var(--label-2);
+    }
+
+    .clock-unit {
+      font-size: var(--t-caption2);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--label-2);
+    }
+
+    .clock-register {
+      border-top: 1px solid var(--separator);
+    }
+
+    .clock-log {
+      max-height: 15rem;
+      overflow-y: auto;
+      padding: 0.85rem 0 0.75rem;
+      margin-bottom: -0.75rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--fill-3) transparent;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+      mask-image: linear-gradient(to bottom, transparent, #000 12px, #000 calc(100% - 12px), transparent);
+    }
+
+    .clock-empty {
+      padding: 0.25rem;
+      font-size: var(--t-subhead);
+      color: var(--label-3);
+    }
+
+    .clock-day + .clock-day {
+      margin-top: 0.75rem;
+    }
+
+    /* Right padding mirrors a row's delete button, so day totals sit above the durations */
+    .clock-day-head {
+      --remove-w: 1.5rem;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0 calc(0.7rem + var(--remove-w)) 0.25rem 0.4rem;
+    }
+
+    .clock-day-name {
+      font-size: var(--t-caption2);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--label-2);
+    }
+
+    .clock-day-total {
+      font-size: var(--t-caption);
+      font-weight: 500;
+      color: var(--label-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .clock-entry {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      min-height: 2.25rem;
+      padding: 0.15rem 0.4rem 0.15rem 0.1rem;
+      border-radius: var(--r-sm);
+      font-size: var(--t-subhead);
+      transition: background var(--dur-fast) ease-out;
+    }
+
+    .clock-entry:hover {
+      background: var(--fill);
+    }
+
+    .clock-entry.clock-enter {
+      animation: task-enter 240ms var(--ease-out) both;
+    }
+
+    /* Times read as text until they're touched, then edit in place like the timer digits */
+    .clock-time {
+      box-sizing: content-box;
+      width: 5ch;
+      padding: 0.2rem 0.3rem;
+      background: transparent;
+      border: 0;
+      border-radius: var(--r-xs);
+      outline: 0;
+      color: var(--label);
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      caret-color: var(--tint);
+      transition: background var(--dur-fast) ease-out, box-shadow var(--dur-fast) ease-out;
+    }
+
+    .clock-time:hover {
+      background: var(--fill-2);
+    }
+
+    .clock-time:focus {
+      background: var(--fill-2);
+      box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.4);
+    }
+
+    .clock-arrow {
+      color: var(--label-3);
+    }
+
+    .clock-arrow svg {
+      width: 0.75rem;
+      height: 0.75rem;
+    }
+
+    .clock-running {
+      padding: 0.2rem 0.3rem;
+      font-weight: 600;
+      color: var(--tint);
+    }
+
+    .clock-plus {
+      font-size: var(--t-caption2);
+      font-weight: 600;
+      color: var(--label-2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .clock-plus:empty {
+      display: none;
+    }
+
+    .clock-dur {
+      margin-left: auto;
+      padding-left: 0.5rem;
+      color: var(--label-2);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .clock-remove {
+        opacity: 0;
+      }
+
+      .clock-entry:hover .clock-remove,
+      .clock-remove:focus-visible {
+        opacity: 1;
+      }
+    }
+
+    .clock-more {
+      display: block;
+      width: 100%;
+      min-height: 2.25rem;
+      margin-top: 0.5rem;
+      border-radius: var(--r-sm);
+      color: var(--tint);
+      font-size: var(--t-subhead);
+      font-weight: 600;
+      transition: background var(--dur-fast) ease-out, transform var(--dur-fast) ease-out;
+    }
+
+    .clock-more:hover {
+      background: var(--fill);
+    }
+
+    .clock-more:active {
+      transform: scale(0.98);
+    }
+
     /* ─── Tasks ────────────────────────────────────────────────────────── */
     .tasks-tabs {
       display: flex;
@@ -1332,7 +1558,8 @@
       transform: scale(0.98);
     }
 
-    /* Export popover — anchored to its trigger, so it scales from the corner it came from */
+    /* Footer popovers (delete menu, export) — anchored to their trigger, so they scale from the corner they came from */
+    .btn-clear-wrap,
     .btn-export-wrap {
       position: relative;
     }
@@ -1412,6 +1639,28 @@
     .export-pop-btn svg {
       flex-shrink: 0;
       color: var(--label-2);
+    }
+
+    .export-pop-btn.danger,
+    .export-pop-btn.danger svg {
+      color: var(--destructive);
+    }
+
+    .export-pop-btn.danger:hover {
+      background: rgba(var(--destructive-rgb), 0.16);
+    }
+
+    .export-pop-btn:disabled {
+      background: none;
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .export-pop-count {
+      margin-left: auto;
+      padding-left: 0.75rem;
+      color: var(--label-2);
+      font-variant-numeric: tabular-nums;
     }
 
     .export-folder-display {
@@ -2502,9 +2751,14 @@
       .tab-name,
       .custom-track-form input,
       .gdrive-setup input,
+      .clock-time,
       .notes-editor,
       .notes-tab-label {
         font-size: 1rem;
+      }
+
+      .clock-day-head {
+        --remove-w: 2rem;
       }
 
       .icon-btn {
@@ -2646,6 +2900,7 @@
       .ripple-circle,
       .timer-tab-panel.panel-enter,
       .task-item.task-enter,
+      .clock-entry.clock-enter,
       .task-check:checked::after {
         animation: none !important;
       }
@@ -2791,6 +3046,8 @@
             tabindex="-1" onclick="switchTimerTab('timer')">Timer</button>
           <button type="button" class="seg-btn" id="tab-stopwatch" role="tab" aria-selected="false"
             aria-controls="panelStopwatch" tabindex="-1" onclick="switchTimerTab('stopwatch')">Stopwatch</button>
+          <button type="button" class="seg-btn" id="tab-clock" role="tab" aria-selected="false" aria-controls="panelClock"
+            tabindex="-1" onclick="switchTimerTab('clock')">Clock<span class="seg-dot" aria-hidden="true"></span></button>
         </div>
 
         <!-- POMODORO -->
@@ -2910,6 +3167,34 @@
 
           <div class="sw-laps" id="swLapsList"></div>
         </div>
+
+        <!-- TIME CLOCK -->
+        <div class="timer-tab-panel clock-panel" id="panelClock" role="tabpanel" aria-labelledby="tab-clock">
+          <div class="clock-head">
+            <div class="phase-badge idle" id="clockBadge">
+              <span class="phase-dot"></span>
+              <span id="clockStatusText">Off the clock</span>
+            </div>
+            <button type="button" class="icon-btn" onclick="downloadClockCSV()" title="Download register as CSV" aria-label="Download register as CSV">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 3.5v9M6.5 9l3.5 3.5L13.5 9M4 16h12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="sw-display-box clock-display">
+            <div class="sw-time-main clock-elapsed" id="clockElapsed">0:00:00</div>
+            <div class="clock-unit">today</div>
+          </div>
+
+          <div class="timer-controls">
+            <button type="button" class="btn btn-primary" id="clockBtn" onclick="toggleClock()">Clock in</button>
+          </div>
+
+          <div class="clock-register">
+            <div class="clock-log" id="clockLog"></div>
+          </div>
+        </div>
       </section>
 
       <!-- TASKS CARD -->
@@ -2931,11 +3216,24 @@
             <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 1.5v9M1.5 6h9" /></svg>
             Add task
           </button>
-          <button type="button" class="icon-btn danger" onclick="clearAllTasks()" title="Clear all tasks" aria-label="Clear all tasks">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6M6 6l.7 9.5a1 1 0 0 0 1 .9h4.6a1 1 0 0 0 1-.9L14 6" />
-            </svg>
-          </button>
+          <div class="btn-clear-wrap">
+            <button type="button" class="icon-btn danger" id="clearMenuBtn" onclick="toggleClearPopover()" title="Delete tasks" aria-label="Delete tasks" aria-haspopup="menu" aria-expanded="false">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6M6 6l.7 9.5a1 1 0 0 0 1 .9h4.6a1 1 0 0 0 1-.9L14 6" />
+              </svg>
+            </button>
+            <div class="export-popover materialize" id="clearPopover" role="menu">
+              <button type="button" class="export-pop-btn" id="clearDoneBtn" role="menuitem" onclick="clearCompletedTasks()">
+                <svg viewBox="0 0 18 18" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6.5" /><path d="M6 9.2l2.1 2.1L12 7.2" /></svg>
+                Delete completed
+                <span class="export-pop-count" id="clearDoneCount"></span>
+              </button>
+              <button type="button" class="export-pop-btn danger" role="menuitem" onclick="clearAllTasks()">
+                <svg viewBox="0 0 18 18" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 5.5h11M7 5.5V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.5M5.2 5.5l.7 8.6a1 1 0 0 0 1 .9h4.2a1 1 0 0 0 1-.9l.7-8.6" /></svg>
+                Delete all tasks
+              </button>
+            </div>
+          </div>
           <div class="btn-export-wrap">
             <button type="button" class="icon-btn" onclick="exportToFolder()" title="Save tasks to folder" aria-label="Save tasks to folder">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -3149,8 +3447,8 @@
           <dd>Reset the active timer</dd>
         </div>
         <div>
-          <dt><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd></dt>
-          <dd>Pomodoro · Timer · Stopwatch</dd>
+          <dt><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd></dt>
+          <dd>Pomodoro · Timer · Stopwatch · Clock</dd>
         </div>
         <div>
           <dt><kbd>Esc</kbd></dt>
@@ -3341,7 +3639,7 @@
         vol.style.setProperty('--val', s.volume + '%');
       }
       if (s.track !== undefined && s.track !== null) currentTrack = s.track;
-      if (s.timerTab === 'timer' || s.timerTab === 'stopwatch') switchTimerTab(s.timerTab, { instant: true });
+      if (['timer', 'stopwatch', 'clock'].includes(s.timerTab)) switchTimerTab(s.timerTab, { instant: true });
       if (s.theme === 'ocean') applyTheme('ocean');
     }
 
@@ -3674,7 +3972,7 @@
     }
 
     // ─── Segmented control: tap to switch, or grab the thumb and throw it ────────
-    const TAB_ORDER = ['pomodoro', 'timer', 'stopwatch'];
+    const TAB_ORDER = ['pomodoro', 'timer', 'stopwatch', 'clock'];
     let activeTimerTab = 'pomodoro';
 
     const seg = {
@@ -3977,6 +4275,339 @@
       listEl.insertAdjacentHTML('afterbegin', lapHtml);
     }
 
+    // ─── Time Clock ──────────────────────────────────────────────────────────────
+    // A register of clock-in / clock-out pairs, kept to the minute so the times
+    // shown always add up to the durations shown. Timestamps are epoch ms; the
+    // entry with out === null is the session still on the clock.
+    const CLOCK_KEY = 'tideFocusClock';
+    const CLOCK_PAGE = 40;
+    const ICON_ARROW = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h8M7 3l3 3-3 3"/></svg>';
+
+    function loadClock() {
+      try {
+        const raw = localStorage.getItem(CLOCK_KEY);
+        if (raw) {
+          const c = JSON.parse(raw);
+          if (c && Array.isArray(c.entries)) {
+            const valid = c.entries
+              .filter(e => e && Number.isFinite(e.id) && Number.isFinite(e.in) &&
+                (e.out === null || (Number.isFinite(e.out) && e.out >= e.in)))
+              .sort((a, b) => a.in - b.in);
+            // Only one session can be on the clock
+            const lastOpen = valid.map(e => e.out).lastIndexOf(null);
+            const entries = valid.filter((e, i) => e.out !== null || i === lastOpen);
+            const nextId = entries.reduce((max, e) => Math.max(max, e.id + 1), c.nextId > 0 ? c.nextId : 1);
+            return { v: 1, nextId, entries };
+          }
+        }
+      } catch (e) { }
+      return null;
+    }
+
+    let clock = loadClock() || { v: 1, nextId: 1, entries: [] };
+    let clockTimer = null;
+    let clockShown = CLOCK_PAGE;
+    let clockRenderedDay = '';
+    let clockEnterId = null;    // only the newly added row animates in
+    let clockLastDeleted = null;
+
+    function saveClock() {
+      try { localStorage.setItem(CLOCK_KEY, JSON.stringify(clock)); } catch (e) { }
+    }
+
+    // Read before every write: another tab may have written since this one last read.
+    // With nothing readable in storage, what's in memory stands.
+    function syncClock() {
+      clock = loadClock() || clock;
+    }
+
+    function clockOpenEntry() { return clock.entries.find(e => e.out === null) || null; }
+    function clockEntry(id) { return clock.entries.find(e => e.id === id) || null; }
+    function clockDayKey(e) { return statsDayKey(new Date(e.in)); }
+    function clockPad(n) { return n.toString().padStart(2, '0'); }
+
+    // One 24-hour format everywhere on the card, so what's shown is also what can be typed
+    function fmtClockTime(ms) {
+      const d = new Date(ms);
+      return `${clockPad(d.getHours())}:${clockPad(d.getMinutes())}`;
+    }
+
+    // "9:30", "09.30", "930", "9" → [hours, minutes], or null when it isn't a time of day
+    function parseClockTime(val) {
+      const m = val.trim().match(/^(\d{1,2})(?:[:.h]?(\d{2}))?$/i);
+      if (!m) return null;
+      const h = Number(m[1]), min = Number(m[2] || 0);
+      return h <= 23 && min <= 59 ? [h, min] : null;
+    }
+
+    function fmtClockDay(ms) {
+      const d = new Date(ms);
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      if (statsDayKey(d) === statsDayKey(today)) return 'Today';
+      if (statsDayKey(d) === statsDayKey(yesterday)) return 'Yesterday';
+      const opts = { weekday: 'short', month: 'short', day: 'numeric' };
+      if (d.getFullYear() !== today.getFullYear()) opts.year = 'numeric';
+      return d.toLocaleDateString(undefined, opts);
+    }
+
+    function fmtClockSpan(ms) {
+      const min = Math.floor(Math.max(0, ms) / 60000);
+      return min >= 60 ? `${Math.floor(min / 60)}h ${min % 60}m` : `${min}m`;
+    }
+
+    function fmtClockReadout(ms) {
+      const s = Math.floor(Math.max(0, ms) / 1000);
+      return `${Math.floor(s / 3600)}:${clockPad(Math.floor(s % 3600 / 60))}:${clockPad(s % 60)}`;
+    }
+
+    // Calendar days between clock-in and clock-out (a session can run past midnight)
+    function clockDaysApart(e) {
+      if (e.out === null) return 0;
+      const a = new Date(e.in), b = new Date(e.out);
+      a.setHours(0, 0, 0, 0);
+      b.setHours(0, 0, 0, 0);
+      return Math.round((b - a) / 86400000);
+    }
+
+    // Time on the clock since midnight, counting the part of any session that falls in today
+    function clockTodayMs(now) {
+      const midnight = new Date(now);
+      midnight.setHours(0, 0, 0, 0);
+      return clock.entries.reduce((sum, e) =>
+        sum + Math.max(0, (e.out === null ? now : e.out) - Math.max(e.in, midnight.getTime())), 0);
+    }
+
+    function setText(el, text) {
+      if (el && el.textContent !== text) el.textContent = text;
+    }
+
+    function renderClockStatus() {
+      const open = clockOpenEntry();
+      document.getElementById('panelClock').classList.toggle('on', !!open);
+      document.getElementById('clockBadge').classList.toggle('idle', !open);
+      const tab = document.getElementById('tab-clock');
+      tab.classList.toggle('on', !!open);
+      tab.setAttribute('aria-label', open ? 'Clock, on the clock' : 'Clock');
+      const btn = document.getElementById('clockBtn');
+      btn.textContent = open ? 'Clock out' : 'Clock in';
+      btn.classList.toggle('btn-primary', !open);
+      btn.classList.toggle('btn-secondary', !!open);
+      let status = 'Off the clock';
+      if (open) {
+        const day = fmtClockDay(open.in);
+        status = `On the clock since ${day === 'Today' ? '' : day + ', '}${fmtClockTime(open.in)}`;
+      }
+      setText(document.getElementById('clockStatusText'), status);
+      clearInterval(clockTimer);
+      clockTimer = open ? setInterval(tickClock, 1000) : null;
+    }
+
+    function clockRowHtml(e) {
+      const time = (field, label) => `
+          <input class="clock-time" value="${fmtClockTime(e[field])}" maxlength="5" spellcheck="false" autocomplete="off"
+            inputmode="numeric" aria-label="${label}, edit to correct" onfocus="this.select()"
+            onblur="clockEditTime(${e.id}, '${field}', this)" onkeydown="if(event.key==='Enter'){this.blur()}">`;
+      const out = e.out === null ? '<span class="clock-running">now</span>' : time('out', 'Clock-out time');
+      return `
+        <div class="clock-entry${e.out === null ? ' open' : ''}${e.id === clockEnterId ? ' clock-enter' : ''}" data-id="${e.id}">
+          ${time('in', 'Clock-in time')}
+          <span class="clock-arrow">${ICON_ARROW}</span>
+          ${out}
+          <span class="clock-plus" title="Clocked out on a later day"></span>
+          <span class="clock-dur"></span>
+          <button type="button" class="icon-btn xs danger clock-remove" onclick="removeClockEntry(${e.id})" title="Delete entry" aria-label="Delete entry">${ICON_X}</button>
+        </div>`;
+    }
+
+    function renderClockLog() {
+      const log = document.getElementById('clockLog');
+      const all = clock.entries;
+      if (!all.length) {
+        log.innerHTML = '<p class="clock-empty">Nothing on the register yet. Clock in to start it.</p>';
+        return;
+      }
+      // Newest day first, each day in the order it happened; a day is never split by the page boundary
+      let start = Math.max(0, all.length - clockShown);
+      while (start > 0 && clockDayKey(all[start - 1]) === clockDayKey(all[start])) start--;
+      const days = [];
+      all.slice(start).forEach(e => {
+        if (!days.length || days[0].key !== clockDayKey(e)) days.unshift({ key: clockDayKey(e), entries: [] });
+        days[0].entries.push(e);
+      });
+      log.innerHTML = days.map(d => `
+        <div class="clock-day">
+          <div class="clock-day-head">
+            <span class="clock-day-name">${escHtml(fmtClockDay(d.entries[0].in))}</span>
+            <span class="clock-day-total"></span>
+          </div>
+          ${d.entries.map(clockRowHtml).join('')}
+        </div>`).join('') +
+        (start > 0 ? '<button type="button" class="clock-more" onclick="showEarlierClock()">Show earlier</button>' : '');
+      log.querySelectorAll('.clock-day').forEach(day => refreshClockDay(day, Date.now()));
+      clockEnterId = null;
+    }
+
+    // Durations and totals for one rendered day, written in place so inputs keep their focus
+    function refreshClockDay(dayEl, now) {
+      let total = 0;
+      dayEl.querySelectorAll('.clock-entry').forEach(row => {
+        const e = clockEntry(Number(row.dataset.id));
+        if (!e) return;
+        const span = (e.out === null ? now : e.out) - e.in;
+        total += span;
+        const apart = clockDaysApart(e);
+        setText(row.querySelector('.clock-plus'), apart ? `+${apart}` : '');
+        setText(row.querySelector('.clock-dur'), fmtClockSpan(span));
+      });
+      setText(dayEl.querySelector('.clock-day-total'), fmtClockSpan(total));
+    }
+
+    function tickClock() {
+      const now = Date.now();
+      if (statsDayKey(new Date(now)) !== clockRenderedDay) { renderClock(); return; }
+      setText(document.getElementById('clockElapsed'), fmtClockReadout(clockTodayMs(now)));
+      const row = document.querySelector('#clockLog .clock-entry.open');
+      if (row) refreshClockDay(row.parentElement, now);
+    }
+
+    function renderClock() {
+      clockRenderedDay = statsDayKey(new Date());
+      renderClockStatus();
+      renderClockLog();
+      tickClock();
+    }
+
+    function renderClockAnimated() {
+      animateCardHeight(document.getElementById('timerCard'), renderClock);
+    }
+
+    function toggleClock() {
+      syncClock();
+      clockLastDeleted = null;
+      const now = Math.floor(Date.now() / 60000) * 60000;
+      const open = clockOpenEntry();
+      if (open) {
+        open.out = Math.max(now, open.in);
+        showToast(`Clocked out — ${fmtClockSpan(open.out - open.in)} this session`);
+      } else {
+        const entry = { id: clock.nextId++, in: now, out: null };
+        clock.entries.push(entry);
+        clock.entries.sort((a, b) => a.in - b.in);
+        clockEnterId = entry.id;
+        showToast(`Clocked in at ${fmtClockTime(now)}`);
+      }
+      saveClock();
+      haptic('commit');
+      renderClockAnimated();
+      if (!open) {
+        // Bring the new row into view without moving the page
+        const log = document.getElementById('clockLog');
+        const row = log.querySelector('.clock-entry.open');
+        log.scrollTop = 0;
+        if (row) log.scrollTop = Math.max(0, row.getBoundingClientRect().bottom - log.getBoundingClientRect().bottom + 16);
+      }
+    }
+
+    // Times are corrected in place, the way the timer digits are: edit, then Enter or click away
+    function clockEditTime(id, field, input) {
+      const shown = clockEntry(id);
+      if (!shown || shown[field] === null) return;
+      const prev = fmtClockTime(shown[field]);
+      const typed = input.value.trim();
+      input.value = prev;
+      if (!typed || typed === prev) return;
+      const hm = parseClockTime(typed);
+      if (!hm) { showToast('Enter a time like 09:30'); return; }
+      syncClock();
+      const e = clockEntry(id);
+      if (!e || e[field] === null) { renderClock(); return; }
+
+      // Both times hang off the clock-in date; a clock-out earlier in the day means past midnight
+      const d = new Date(e.in);
+      d.setHours(hm[0], hm[1], 0, 0);
+      let problem = '';
+      if (field === 'out' && d.getTime() < e.in) {
+        d.setDate(d.getDate() + 1);
+        if (d.getTime() > Date.now()) problem = 'Clock-out has to come after clock-in';
+      }
+      const t = d.getTime();
+      if (!problem && t > Date.now()) problem = "That time hasn't come yet";
+      if (!problem && field === 'in' && e.out !== null && t > e.out) problem = 'Clock-in has to come before clock-out';
+      if (problem) { showToast(problem); return; }
+
+      e[field] = t;
+      input.value = fmtClockTime(t);
+      const inOrder = clock.entries.every((x, i, a) => i === 0 || a[i - 1].in <= x.in);
+      if (!inOrder) clock.entries.sort((a, b) => a.in - b.in);
+      saveClock();
+      const day = input.closest('.clock-day');
+      if (!inOrder || !day) { renderClock(); return; }
+      renderClockStatus();
+      refreshClockDay(day, Date.now());
+      tickClock();
+    }
+
+    function removeClockEntry(id) {
+      syncClock();
+      const idx = clock.entries.findIndex(e => e.id === id);
+      if (idx !== -1) {
+        clockLastDeleted = clock.entries.splice(idx, 1)[0];
+        saveClock();
+        showToast('Entry deleted', { action: 'Undo', onAction: undoRemoveClockEntry });
+      }
+      renderClockAnimated();
+    }
+
+    function undoRemoveClockEntry() {
+      if (!clockLastDeleted) return;
+      syncClock();
+      clock.entries.push(clockLastDeleted);
+      clock.entries.sort((a, b) => a.in - b.in);
+      clockEnterId = clockLastDeleted.id;
+      clockLastDeleted = null;
+      saveClock();
+      renderClockAnimated();
+    }
+
+    function showEarlierClock() {
+      clockShown += CLOCK_PAGE;
+      renderClock();
+    }
+
+    function downloadClockCSV() {
+      if (!clock.entries.length) { showToast('Nothing on the register to export'); return; }
+      const rows = clock.entries.map(e => {
+        const day = clockDayKey(e);
+        let out = '', duration = '';
+        if (e.out !== null) {
+          const outDay = statsDayKey(new Date(e.out));
+          out = (outDay === day ? '' : outDay + ' ') + fmtClockTime(e.out);
+          const min = Math.round((e.out - e.in) / 60000);
+          duration = `${Math.floor(min / 60)}:${clockPad(min % 60)}`;
+        }
+        return [day, fmtClockTime(e.in), out, duration].join(',');
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([['Date,Clock in,Clock out,Duration', ...rows].join('\n')], { type: 'text/csv' }));
+      a.download = `tide-focus-time-clock-${statsDayKey(new Date())}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('CSV downloaded');
+    }
+
+    // Keep the register honest across tabs, and catch up after the tab was asleep
+    window.addEventListener('storage', e => {
+      if (e.key !== CLOCK_KEY) return;
+      syncClock();
+      renderClock();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) tickClock();
+    });
+
     // ─── Tasks ────────────────────────────────────────────────────────────────────
     const TABS_KEY = 'tideFocusTaskTabs';
     const LEGACY_KEY = 'tideFocusTasks';
@@ -4255,16 +4886,35 @@
       const idx = tasks.findIndex(t => t.id === id);
       if (idx === -1) return;
       const [t] = tasks.splice(idx, 1);
-      lastDeleted = { task: t, index: idx, tabId: activeTab.id };
+      lastDeleted = { items: [{ task: t, index: idx }], tabId: activeTab.id };
       renderTasks();
       if (!opts.quiet) showToast(t.text.trim() ? 'Task deleted' : 'Task removed', { action: 'Undo', onAction: undoRemoveTask });
+    }
+
+    // Batch delete behind the trash menu; one Undo puts the whole batch back
+    function removeTasksWhere(match) {
+      const items = [];
+      tasks.forEach((t, index) => { if (match(t)) items.push({ task: t, index }); });
+      if (!items.length) return 0;
+      tasks = tasks.filter(t => !match(t));
+      lastDeleted = { items, tabId: activeTab.id };
+      if (!tasks.length) {
+        // The list always keeps one row; remember the stand-in so Undo can take it away again
+        lastDeleted.placeholderId = nextId;
+        tasks.push({ id: nextId++, text: '', done: false });
+      }
+      renderTasks();
+      return items.length;
     }
 
     function undoRemoveTask() {
       if (!lastDeleted) return;
       if (lastDeleted.tabId !== activeTab.id) switchTab(lastDeleted.tabId);
-      tasks.splice(Math.min(lastDeleted.index, tasks.length), 0, lastDeleted.task);
-      enterTaskId = lastDeleted.task.id;
+      const { items, placeholderId } = lastDeleted;
+      const blank = tasks.findIndex(t => t.id === placeholderId && !t.done && !t.text.trim());
+      if (blank !== -1) tasks.splice(blank, 1);
+      items.forEach(({ task, index }) => tasks.splice(Math.min(index, tasks.length), 0, task));
+      if (items.length === 1) enterTaskId = items[0].task.id;
       lastDeleted = null;
       renderTasks();
     }
@@ -4301,11 +4951,31 @@
       }
     }
 
+    function clearCompletedTasks() {
+      closeClearPopover();
+      const n = removeTasksWhere(t => t.done);
+      if (!n) { showToast('No completed tasks'); return; }
+      showToast(`🧹 ${n} completed task${n === 1 ? '' : 's'} deleted`, { action: 'Undo', onAction: undoRemoveTask });
+    }
+
     function clearAllTasks() {
+      closeClearPopover();
       if (!confirm('Clear all tasks?')) return;
-      tasks = [{ id: nextId++, text: '', done: false }];
-      renderTasks();
-      showToast('🧹 Tasks cleared');
+      removeTasksWhere(() => true);
+      showToast('🧹 Tasks cleared', { action: 'Undo', onAction: undoRemoveTask });
+    }
+
+    function toggleClearPopover() {
+      const done = tasks.filter(t => t.done).length;
+      document.getElementById('clearDoneCount').textContent = done || '';
+      document.getElementById('clearDoneBtn').disabled = !done;
+      const open = document.getElementById('clearPopover').classList.toggle('in');
+      document.getElementById('clearMenuBtn').setAttribute('aria-expanded', String(open));
+    }
+
+    function closeClearPopover() {
+      document.getElementById('clearPopover').classList.remove('in');
+      document.getElementById('clearMenuBtn').setAttribute('aria-expanded', 'false');
     }
 
     // ─── Export Tasks ────────────────────────────────────────────────────────────
@@ -4369,6 +5039,7 @@
 
     function toggleExportPopover(e) {
       e.stopPropagation();
+      closeClearPopover();
       const open = document.getElementById('exportPopover').classList.toggle('in');
       document.querySelector('.btn-export-settings').setAttribute('aria-expanded', String(open));
     }
@@ -4381,6 +5052,7 @@
 
     document.addEventListener('click', e => {
       if (!e.target.closest('.btn-export-wrap')) closeExportPopover();
+      if (!e.target.closest('.btn-clear-wrap')) closeClearPopover();
     });
 
     // ─── Google Drive Upload ─────────────────────────────────────────────────────
@@ -5374,6 +6046,7 @@
       if (e.key === 'Escape') {
         if (shortcutsOpen) { toggleShortcutsOverlay(false); e.preventDefault(); return; }
         if (document.getElementById('exportPopover').classList.contains('in')) { closeExportPopover(); e.preventDefault(); return; }
+        if (document.getElementById('clearPopover').classList.contains('in')) { closeClearPopover(); e.preventDefault(); return; }
         if (isSheetMode() ? sheet.open : !player.classList.contains('minimized')) { closeSoundscape(); e.preventDefault(); }
         return;
       }
@@ -5383,16 +6056,18 @@
       if (e.key === ' ') {
         if (e.target.closest('button, [role="button"]')) return;
         e.preventDefault();
+        // The clock tab has no key: the register only changes on a deliberate press
         if (activeTimerTab === 'pomodoro') toggleTimer();
         else if (activeTimerTab === 'timer') ctToggle();
-        else swToggle();
+        else if (activeTimerTab === 'stopwatch') swToggle();
       } else if (e.key === 'r' || e.key === 'R') {
         if (activeTimerTab === 'pomodoro') resetTimer();
         else if (activeTimerTab === 'timer') ctReset();
-        else swReset();
+        else if (activeTimerTab === 'stopwatch') swReset();
       } else if (e.key === '1') switchTimerTab('pomodoro');
       else if (e.key === '2') switchTimerTab('timer');
       else if (e.key === '3') switchTimerTab('stopwatch');
+      else if (e.key === '4') switchTimerTab('clock');
     });
 
     // ─── Init ────────────────────────────────────────────────────────────────────
@@ -5402,6 +6077,7 @@
     initTimer();
     ctInit();
     swRender();
+    renderClock();
     renderTabs();
     renderTasks();
     try { loadCustomTracks(); } catch (e) { }
